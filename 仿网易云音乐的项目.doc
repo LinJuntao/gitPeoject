@@ -1,0 +1,1910 @@
+
+        <html xmlns:v="urn:schemas-microsoft-com:vml"
+        xmlns:o="urn:schemas-microsoft-com:office:office"
+        xmlns:w="urn:schemas-microsoft-com:office:word"
+        xmlns="http://www.w3.org/TR/REC-html40">
+        <head><meta http-equiv=Content-Type content="text/html;  
+        charset=utf-8">
+        <style type="text/css">
+            table  
+            {  
+                border-collapse: collapse;
+                border: none;  
+                width: 100%;  
+            }  
+            td  
+            {  
+                border: solid #CCC 1px;  
+            }  
+            .codestyle{
+                word-break: break-all;
+                background:silver;mso-highlight:silver;
+            }
+        </style>
+        <meta name=ProgId content=Word.Document>
+        <meta name=Generator content="Microsoft Word 11">
+        <meta name=Originator content="Microsoft Word 11">
+        <xml><w:WordDocument><w:View>Print</w:View></xml></head>
+        <body><h1>1、MySQL的搭建</h1><div style="margin-left:20px;"><h2>1.1、① 数据库名</h2><div style="margin-left:20px;"><h2>
+数据库：
+</h2>
+<h4>
+主机名或IP地址：  120.78.75.213
+端口： 3306
+用户名：root
+密码：YWRtaW4=
+**base64转码
+</h4>
+<p>该项目所连接的数据库为：<strong>itcloudmusic</strong>。</p></div><h2>1.1、关于用户</h2><div style="margin-left:20px;"><h3>1.1.1、用户表（user）</h3><div style="margin-left:30px;"><h3>存储用户的数据库表:<h4>user</h4></h3>
+<hr>
+<ul>
+<li>用户表，管理员和普通用户都在一个表格</li>
+</ul>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">userid</td>
+<td style="text-align: left;">int</td>
+<td>用户的ID</td>
+</tr>
+<tr>
+<td style="text-align: left;">setdate</td>
+<td style="text-align: left;">string</td>
+<td>用户创建的时间</td>
+</tr>
+<tr>
+<td style="text-align: left;">username</td>
+<td style="text-align: left;">string</td>
+<td>用户名</td>
+</tr>
+<tr>
+<td style="text-align: left;">password</td>
+<td style="text-align: left;">string</td>
+<td>用户密码，会base64加密</td>
+</tr>
+<tr>
+<td style="text-align: left;">memo</td>
+<td style="text-align: left;">string</td>
+<td>备注</td>
+</tr>
+<tr>
+<td style="text-align: left;">ifmember</td>
+<td style="text-align: left;">int</td>
+<td>判断是否为会员，0代表否，1代表是</td>
+</tr>
+<tr>
+<td style="text-align: left;">ifmanager</td>
+<td style="text-align: left;">int</td>
+<td>判断是否为管理员，0 为否，1为是</td>
+</tr>
+<tr>
+<td style="text-align: left;">downloadnul</td>
+<td style="text-align: left;">int</td>
+<td>用户下载歌曲的数量</td>
+</tr>
+<tr>
+<td style="text-align: left;">storenul</td>
+<td style="text-align: left;">int</td>
+<td>用户存储在云端的歌曲数量</td>
+</tr>
+</tbody>
+</table></div><h3>1.1.2、存储云端表（storecloud）</h3><div style="margin-left:30px;"><h3>存储云端的数据库表:<h4>storecloud</h4></h3>
+<hr>
+<ul>
+<li>存储云端表</li>
+</ul>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">storeid</td>
+<td style="text-align: left;">int</td>
+<td>用户存储云端的id</td>
+</tr>
+<tr>
+<td style="text-align: left;">storedate</td>
+<td style="text-align: left;">string</td>
+<td>用户上传到云端的时间</td>
+</tr>
+<tr>
+<td style="text-align: left;">storesong</td>
+<td style="text-align: left;">string</td>
+<td>存储云端的用户歌曲名</td>
+</tr>
+<tr>
+<td style="text-align: left;">storelyric</td>
+<td style="text-align: left;">string</td>
+<td>存储云端的歌曲的歌词</td>
+</tr>
+<tr>
+<td style="text-align: left;">storemanager</td>
+<td style="text-align: left;">string</td>
+<td>上传云端的用户名</td>
+</tr>
+<tr>
+<td style="text-align: left;">storesongurl</td>
+<td style="text-align: left;">string</td>
+<td>存储到云端的歌曲的url地址</td>
+</tr>
+<tr>
+<td style="text-align: left;">ifremove</td>
+<td style="text-align: left;">string</td>
+<td>判断时候上下架，0代表上架，1代表下架</td>
+</tr>
+</tbody>
+</table></div><h3>1.1.3、用户下载表(downloadsong)</h3><div style="margin-left:30px;"><h3>存储每个用下载的数据库表:<h4>downloadsong</h4></h3>
+<hr>
+<ul>
+<li>下载记录表</li>
+</ul>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">downloadid</td>
+<td style="text-align: left;">int</td>
+<td>下载id</td>
+</tr>
+<tr>
+<td style="text-align: left;">downsongid</td>
+<td style="text-align: left;">int</td>
+<td>下载歌曲的id</td>
+</tr>
+<tr>
+<td style="text-align: left;">downuser</td>
+<td style="text-align: left;">string</td>
+<td>下载者</td>
+</tr>
+<tr>
+<td style="text-align: left;">downdate</td>
+<td style="text-align: left;">string</td>
+<td>下载d 时间</td>
+</tr>
+<tr>
+<td style="text-align: left;">downstuta</td>
+<td style="text-align: left;">int</td>
+<td>下载的状态，0代表未下载，1代表已下载</td>
+</tr>
+</tbody>
+</table></div><h3>1.1.4、收藏歌曲（collectsong）</h3><div style="margin-left:30px;"><h3>存储收藏记录的数据库表:<h4>collectsong</h4></h3>
+<hr>
+<ul>
+<li>单曲评论表，保留全部的评论，然后根据对应的歌曲进行查找</li>
+</ul>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">collectsid</td>
+<td style="text-align: left;">int</td>
+<td>收藏歌曲表的id</td>
+</tr>
+<tr>
+<td style="text-align: left;">songid</td>
+<td style="text-align: left;">int</td>
+<td>收藏歌曲 对应的id</td>
+</tr>
+<tr>
+<td style="text-align: left;">collectuser</td>
+<td style="text-align: left;">string</td>
+<td>收藏人</td>
+</tr>
+<tr>
+<td style="text-align: left;">collectdate</td>
+<td style="text-align: left;">string</td>
+<td>收藏时间</td>
+</tr>
+<tr>
+<td style="text-align: left;">collectstate</td>
+<td style="text-align: left;">int</td>
+<td>收藏歌曲的状态，0代表已收藏，1代表已删除</td>
+</tr>
+</tbody>
+</table></div><h3>1.1.5、收藏视频（collectvideo）</h3><div style="margin-left:30px;"><h3>存储收藏视频记录的数据库表:<h4>collectvideo</h4></h3>
+<hr>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">collectid</td>
+<td style="text-align: left;">int</td>
+<td>收藏视频自身的id</td>
+</tr>
+<tr>
+<td style="text-align: left;">videoid</td>
+<td style="text-align: left;">int</td>
+<td>收藏对应的视频的id</td>
+</tr>
+<tr>
+<td style="text-align: left;">collectusername</td>
+<td style="text-align: left;">string</td>
+<td>收藏对应视频的用户名</td>
+</tr>
+<tr>
+<td style="text-align: left;">collectdate</td>
+<td style="text-align: left;">string</td>
+<td>收藏视频的时间</td>
+</tr>
+<tr>
+<td style="text-align: left;">colletcstate</td>
+<td style="text-align: left;">int</td>
+<td>收藏视频的状态，0代表收藏，1代表已删除</td>
+</tr>
+</tbody>
+</table></div><h3>1.1.6、收藏歌单（collectmenu）</h3><div style="margin-left:30px;"><h3>存储收藏歌单记录的数据库表:<h4>collectmenu</h4></h3>
+<hr>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">collectid</td>
+<td style="text-align: left;">int</td>
+<td>用户收藏歌单自身的id</td>
+</tr>
+<tr>
+<td style="text-align: left;">collectmenuid</td>
+<td style="text-align: left;">int</td>
+<td>用户收藏歌单对应的id</td>
+</tr>
+<tr>
+<td style="text-align: left;">collectusername</td>
+<td style="text-align: left;">string</td>
+<td>对应的收藏歌单的人名</td>
+</tr>
+<tr>
+<td style="text-align: left;">collectdate</td>
+<td style="text-align: left;">string</td>
+<td>收藏歌单的时间</td>
+</tr>
+<tr>
+<td style="text-align: left;">collectstate</td>
+<td style="text-align: left;">int</td>
+<td>收藏表单的状态，0代表已收藏，1代表已删除</td>
+</tr>
+</tbody>
+</table></div></div><h2>1.2、关于数据</h2><div style="margin-left:20px;"><h3>1.2.1、单曲表(songs)</h3><div style="margin-left:30px;"><h3>存储每首歌的数据库表:<h4>songs</h4></h3>
+<hr>
+<ul>
+<li>单曲表，用于存储单条歌曲，这里的数据估计会特别多</li>
+</ul>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">songid</td>
+<td style="text-align: left;">int</td>
+<td>歌曲的id，很多操作都会涉及songid</td>
+</tr>
+<tr>
+<td style="text-align: left;">songdate</td>
+<td style="text-align: left;">string</td>
+<td>上传歌曲时，获取的本地时间，起到一个记录的作用</td>
+</tr>
+<tr>
+<td style="text-align: left;">songname</td>
+<td style="text-align: left;">string</td>
+<td>歌名，查询时会根据歌名进行查找</td>
+</tr>
+<tr>
+<td style="text-align: left;">singer</td>
+<td style="text-align: left;">string</td>
+<td>歌手，对应另一个表</td>
+</tr>
+<tr>
+<td style="text-align: left;">songbrief</td>
+<td style="text-align: left;">string</td>
+<td>歌曲简介，介绍这首歌来自于哪，谁发行等等问题</td>
+</tr>
+<tr>
+<td style="text-align: left;">songcover</td>
+<td style="text-align: left;">string</td>
+<td>歌曲封面的url地址,单独播放时，会用到，默认为：<a href="http://120.78.75.213:8080/imgs/song.jpg">http://120.78.75.213:8080/imgs/song.jpg</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">songlyric</td>
+<td style="text-align: left;">string</td>
+<td>歌曲的歌词,里面会以，的形式排序，在前端使用时，需要把，换成 <code><br/></code></td>
+</tr>
+<tr>
+<td style="text-align: left;">songspecial</td>
+<td style="text-align: left;">string</td>
+<td>歌曲专辑名,对应另一个表</td>
+</tr>
+<tr>
+<td style="text-align: left;">songkind</td>
+<td style="text-align: left;">string</td>
+<td>歌单的种类，暂时分伍种:欧美，国语，华语，日韩，其他，默认为其他</td>
+</tr>
+<tr>
+<td style="text-align: left;">upmanager</td>
+<td style="text-align: left;">string</td>
+<td>上传歌曲的用户，此为管理员上传</td>
+</tr>
+<tr>
+<td style="text-align: left;">songurl</td>
+<td style="text-align: left;">string</td>
+<td>存储歌曲的url地址,提供下载等等功能</td>
+</tr>
+<tr>
+<td style="text-align: left;">songclicknul</td>
+<td style="text-align: left;">int</td>
+<td>歌曲的点击量,在热门排行会使用到</td>
+</tr>
+<tr>
+<td style="text-align: left;">songdownnul</td>
+<td style="text-align: left;">int</td>
+<td>歌曲下载量，下载排行榜时用到</td>
+</tr>
+</tbody>
+</table></div><h3>1.2.2、视频表（videos）</h3><div style="margin-left:30px;"><h3>存储每个视频的数据库表:<h4>videos</h4></h3>
+<hr>
+<ul>
+<li>视频表，用于存储单条视频</li>
+</ul>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">videoid</td>
+<td style="text-align: left;">int</td>
+<td>视频的id，很多操作都会涉及videoid</td>
+</tr>
+<tr>
+<td style="text-align: left;">videodate</td>
+<td style="text-align: left;">string</td>
+<td>上传视频时，获取的本地时间，起到一个记录的作用</td>
+</tr>
+<tr>
+<td style="text-align: left;">videotitle</td>
+<td style="text-align: left;">string</td>
+<td>视频的标题，查询时会根据视频的标题进行查找</td>
+</tr>
+<tr>
+<td style="text-align: left;">videobrief</td>
+<td style="text-align: left;">string</td>
+<td>视频的简介</td>
+</tr>
+<tr>
+<td style="text-align: left;">videocover</td>
+<td style="text-align: left;">string</td>
+<td>存视频封面的url地址，默认为：<a href="http://120.78.75.213:8080/imgs/video.jpg">http://120.78.75.213:8080/imgs/video.jpg</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">videokind</td>
+<td style="text-align: left;">string</td>
+<td>视频的分类，暂时就三种，娱乐/mv/其他，默认为其他</td>
+</tr>
+<tr>
+<td style="text-align: left;">videomanager</td>
+<td style="text-align: left;">string</td>
+<td>上传视频的用户，可以管理员，可以普通用户</td>
+</tr>
+<tr>
+<td style="text-align: left;">videourl</td>
+<td style="text-align: left;">string</td>
+<td>存储视频的路径url</td>
+</tr>
+<tr>
+<td style="text-align: left;">videoclicknul</td>
+<td style="text-align: left;">int</td>
+<td>视频的播放量,在热门排行会使用到</td>
+</tr>
+<tr>
+<td style="text-align: left;">removestate</td>
+<td style="text-align: left;">int</td>
+<td>视频的状态0代表上线，1代表下架 ，默认为0</td>
+</tr>
+</tbody>
+</table></div><h3>1.2.3、专辑表(albums)</h3><div style="margin-left:30px;"><h3>专辑对应数据表:<h4>albums</h4></h3>
+<hr>
+<ul>
+<li>专辑表，与单曲表和歌手表相互对应
+该表的删除是直接删除记录，当该表删除后，对应的歌曲的专辑名会变成 无</li>
+</ul>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">albumid</td>
+<td style="text-align: left;">int</td>
+<td>专辑的id，很多操作都会涉及albumid</td>
+</tr>
+<tr>
+<td style="text-align: left;">albumdate</td>
+<td style="text-align: left;">string</td>
+<td>上传专辑的时间，获取的本地时间，起到一个记录的作用</td>
+</tr>
+<tr>
+<td style="text-align: left;">albumname</td>
+<td style="text-align: left;">string</td>
+<td>专辑的名称,一个专辑名会对应多个单曲</td>
+</tr>
+<tr>
+<td style="text-align: left;">singer</td>
+<td style="text-align: left;">string</td>
+<td>歌手，对应另一个表</td>
+</tr>
+<tr>
+<td style="text-align: left;">albumbrief</td>
+<td style="text-align: left;">string</td>
+<td>专辑的简介</td>
+</tr>
+<tr>
+<td style="text-align: left;">albumkind</td>
+<td style="text-align: left;">string</td>
+<td>歌单的种类，暂时分伍种:欧美，国语，华语，日韩，其他,默认为其他</td>
+</tr>
+</tbody>
+</table></div><h3>1.2.4、歌手表（singers）</h3><div style="margin-left:30px;"><h3>存储歌手的数据库表:<h4>singers</h4></h3>
+<hr>
+<ul>
+<li>歌手表，存储歌手，与单曲和专辑表相互对应</li>
+</ul>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">singerid</td>
+<td style="text-align: left;">int</td>
+<td>歌手的id，很多操作都会涉及singerid</td>
+</tr>
+<tr>
+<td style="text-align: left;">singername</td>
+<td style="text-align: left;">string</td>
+<td>歌手名字，查询时会根据歌手名字进行查找</td>
+</tr>
+<tr>
+<td style="text-align: left;">singerFt</td>
+<td style="text-align: left;">string</td>
+<td>歌手首字母，便于排序,在根据首字母查找时用到</td>
+</tr>
+<tr>
+<td style="text-align: left;">singerbrief</td>
+<td style="text-align: left;">string</td>
+<td>歌手的 简介</td>
+</tr>
+<tr>
+<td style="text-align: left;">singercover</td>
+<td style="text-align: left;">string</td>
+<td>歌曲封面的url地址,单独播放时，会用到</td>
+</tr>
+<tr>
+<td style="text-align: left;">songlyric</td>
+<td style="text-align: left;">string</td>
+<td>歌手的照片的url地址，默认为：<a href="http://120.78.75.213:8080/imgs/singer.jpg">http://120.78.75.213:8080/imgs/singer.jpg</a></td>
+</tr>
+</tbody>
+</table></div><h3>1.2.5、评论单曲（commentsongs）</h3><div style="margin-left:30px;"><h3>存储每首歌的对应的评论的数据库表:<h4>commentsongs</h4></h3>
+<hr>
+<ul>
+<li>单曲评论表，保留全部的评论，然后根据对应的歌曲进行查找</li>
+</ul>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">commentid</td>
+<td style="text-align: left;">int</td>
+<td>单曲的评论id，很多操作都会涉及commentid</td>
+</tr>
+<tr>
+<td style="text-align: left;">commentdate</td>
+<td style="text-align: left;">string</td>
+<td>评论单曲的时间</td>
+</tr>
+<tr>
+<td style="text-align: left;">commentname</td>
+<td style="text-align: left;">string</td>
+<td>评论人名</td>
+</tr>
+<tr>
+<td style="text-align: left;">commentbrief</td>
+<td style="text-align: left;">string</td>
+<td>评论内容</td>
+</tr>
+<tr>
+<td style="text-align: left;">commentsongid</td>
+<td style="text-align: left;">int</td>
+<td>评论歌曲对应的id</td>
+</tr>
+<tr>
+<td style="text-align: left;">commentstate</td>
+<td style="text-align: left;">int</td>
+<td>评论单曲的状态，0代表上线，1代表删除</td>
+</tr>
+</tbody>
+</table></div><h3>1.2.6、评论专辑(commentalbums)</h3><div style="margin-left:30px;"><h3>存储每个专辑的对应的评论的数据库表:<h4>commentalbums</h4></h3>
+<hr>
+<ul>
+<li>专辑评论表，保留全部的评论，然后根据对应的专辑进行查找</li>
+</ul>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">commentid</td>
+<td style="text-align: left;">int</td>
+<td>专辑的评论id，很多操作都会涉及commentid</td>
+</tr>
+<tr>
+<td style="text-align: left;">commentdate</td>
+<td style="text-align: left;">string</td>
+<td>评论专辑的时间</td>
+</tr>
+<tr>
+<td style="text-align: left;">commentname</td>
+<td style="text-align: left;">string</td>
+<td>评论人名</td>
+</tr>
+<tr>
+<td style="text-align: left;">commentbrief</td>
+<td style="text-align: left;">string</td>
+<td>评论内容</td>
+</tr>
+<tr>
+<td style="text-align: left;">commentalbumid</td>
+<td style="text-align: left;">int</td>
+<td>评论专辑对应的id</td>
+</tr>
+<tr>
+<td style="text-align: left;">commentstate</td>
+<td style="text-align: left;">int</td>
+<td>评论单曲的状态，0代表上线，1代表删除</td>
+</tr>
+</tbody>
+</table></div><h3>1.2.7、评论视频（commentvideos）</h3><div style="margin-left:30px;"><h3>存储每个视频的对应的评论的数据库表:<h4>commentvideos</h4></h3>
+<hr>
+<ul>
+<li>视频评论表，保留全部的评论，然后根据对应的视频进行查找</li>
+</ul>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">commentid</td>
+<td style="text-align: left;">int</td>
+<td>视频的评论id，很多操作都会涉及commentid</td>
+</tr>
+<tr>
+<td style="text-align: left;">commentdate</td>
+<td style="text-align: left;">string</td>
+<td>评论视频的时间</td>
+</tr>
+<tr>
+<td style="text-align: left;">commentname</td>
+<td style="text-align: left;">string</td>
+<td>评论人名</td>
+</tr>
+<tr>
+<td style="text-align: left;">commentbrief</td>
+<td style="text-align: left;">string</td>
+<td>评论内容</td>
+</tr>
+<tr>
+<td style="text-align: left;">commentvideoid</td>
+<td style="text-align: left;">int</td>
+<td>评论视频对应的id</td>
+</tr>
+<tr>
+<td style="text-align: left;">commentstate</td>
+<td style="text-align: left;">int</td>
+<td>评论单曲的状态，0代表上线，1代表删除</td>
+</tr>
+</tbody>
+</table></div><h3>1.2.8、歌单表（usersongmenu）</h3><div style="margin-left:30px;"><h3>存储歌单的数据库表:<h4>usersongmenu</h4></h3>
+<hr>
+<ul>
+<li>歌单表</li>
+</ul>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">menuid</td>
+<td style="text-align: left;">int</td>
+<td>歌单的id</td>
+</tr>
+<tr>
+<td style="text-align: left;">menudate</td>
+<td style="text-align: left;">string</td>
+<td>创建歌单的时间</td>
+</tr>
+<tr>
+<td style="text-align: left;">menuname</td>
+<td style="text-align: left;">string</td>
+<td>歌单的名</td>
+</tr>
+<tr>
+<td style="text-align: left;">menucover</td>
+<td style="text-align: left;">string</td>
+<td>歌单封面图片 url地址</td>
+</tr>
+<tr>
+<td style="text-align: left;">menubrief</td>
+<td style="text-align: left;">string</td>
+<td>歌单的简介</td>
+</tr>
+<tr>
+<td style="text-align: left;">menukind</td>
+<td style="text-align: left;">string</td>
+<td>歌单的种类，暂时分伍种:欧美，国语，华语，日韩，其他</td>
+</tr>
+<tr>
+<td style="text-align: left;">menuclicknul</td>
+<td style="text-align: left;">int</td>
+<td>歌单的点击量</td>
+</tr>
+<tr>
+<td style="text-align: left;">songid</td>
+<td style="text-align: left;">int</td>
+<td>歌单内对应歌曲的id，不得重复</td>
+</tr>
+<tr>
+<td style="text-align: left;">menuuser</td>
+<td style="text-align: left;">string</td>
+<td>属于某个用户的歌单</td>
+</tr>
+<tr>
+<td style="text-align: left;">menustate</td>
+<td style="text-align: left;">string</td>
+<td>menustate</td>
+</tr>
+</tbody>
+</table></div></div></div><h1>2、Java的接口文档</h1><div style="margin-left:20px;"><h2>2.1、用户部分</h2><div style="margin-left:20px;"><h3>2.1.1、用户登陆</h3><div style="margin-left:30px;"><ul>
+<li>用户登陆接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/user/login</code>
+'
+<strong>参数：</strong> </li>
+</ul>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">username</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">string</td>
+<td>用户名</td>
+</tr>
+<tr>
+<td style="text-align: left;">password</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">string</td>
+<td>密码(Base64加密)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Eximg</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">string</td>
+<td>验证码</td>
+</tr>
+</tbody>
+</table></div><h3>2.1.2、用户注册</h3><div style="margin-left:30px;"><ul>
+<li>用户注册接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/user/registerUser</code>
+'
+<strong>参数：</strong> </li>
+</ul>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">username</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">string</td>
+<td>用户名</td>
+</tr>
+<tr>
+<td style="text-align: left;">password</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">string</td>
+<td>密码(Base64加密)</td>
+</tr>
+<tr>
+<td style="text-align: left;">memo</td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">string</td>
+<td>备注</td>
+</tr>
+</tbody>
+</table></div><h3>2.1.3、用户删除</h3><div style="margin-left:30px;"><ul>
+<li>用户删除接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/user/deloneUser</code>
+'
+<strong>参数：</strong> </li>
+</ul>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">userid</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>用户id</td>
+</tr>
+</tbody>
+</table></div><h3>2.1.4、用户查找</h3><div style="margin-left:30px;"><ul>
+<li>用户查找接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/user/findUser</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">inputuser</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">string</td>
+<td>查找的用户民</td>
+</tr>
+</tbody>
+</table></div><h3>2.1.5、用户修改</h3><div style="margin-left:30px;"><ul>
+<li>用户修改接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/user/upUser</code>
+'
+<strong>参数：</strong> </li>
+</ul>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">username</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">string</td>
+<td>用户名</td>
+</tr>
+<tr>
+<td style="text-align: left;">password</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">string</td>
+<td>密码(Base64加密)</td>
+</tr>
+<tr>
+<td style="text-align: left;">memo</td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">string</td>
+<td>备注</td>
+</tr>
+<tr>
+<td style="text-align: left;">userid</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>修改用户的id</td>
+</tr>
+</tbody>
+</table></div><h3>2.1.6、打印用户所有数据</h3><div style="margin-left:30px;"><ul>
+<li>所有用户数据接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/user/showUser</code>
+'
+<strong>参数：</strong> </li>
+</ul>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">pageNum</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>分页</td>
+</tr>
+</tbody>
+</table></div></div><h2>2.2、音乐部分</h2><div style="margin-left:20px;"><h3>2.2.1、1.打印所有音乐数据</h3><div style="margin-left:30px;"><p>欢迎使用ShowDoc！</p>
+<ul>
+<li>用户注册接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://http://120.78.75.213:8080/cloudmusic/music/listMusic</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">pageNum</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>页数</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.2、2.添加单曲</h3><div style="margin-left:30px;"><ul>
+<li>用户注册接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/addoneMusic</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">songname</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>歌名</td>
+</tr>
+<tr>
+<td style="text-align: left;">singer</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>歌手</td>
+</tr>
+<tr>
+<td style="text-align: left;">songbrief</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>歌曲的简介</td>
+</tr>
+<tr>
+<td style="text-align: left;">songcover</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>歌曲的封面Url地址</td>
+</tr>
+<tr>
+<td style="text-align: left;">songlyric</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>歌词</td>
+</tr>
+<tr>
+<td style="text-align: left;">songspecial</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>专辑名</td>
+</tr>
+<tr>
+<td style="text-align: left;">songkind</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>种类</td>
+</tr>
+<tr>
+<td style="text-align: left;">upmanager</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>发布人</td>
+</tr>
+<tr>
+<td style="text-align: left;">songurl</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>单曲保存URL地址</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.3、3.单曲修改</h3><div style="margin-left:30px;"><ul>
+<li>用户修改单曲接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/reloneMusic</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">songid</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>歌曲的ID</td>
+</tr>
+<tr>
+<td style="text-align: left;">songname</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>歌名</td>
+</tr>
+<tr>
+<td style="text-align: left;">singer</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>歌手</td>
+</tr>
+<tr>
+<td style="text-align: left;">songbrief</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>歌曲的简介</td>
+</tr>
+<tr>
+<td style="text-align: left;">songcover</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>歌曲的封面Url地址</td>
+</tr>
+<tr>
+<td style="text-align: left;">songlyric</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>歌词</td>
+</tr>
+<tr>
+<td style="text-align: left;">songspecial</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>专辑名</td>
+</tr>
+<tr>
+<td style="text-align: left;">songkind</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>种类</td>
+</tr>
+<tr>
+<td style="text-align: left;">upmanager</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>发布人</td>
+</tr>
+<tr>
+<td style="text-align: left;">songurl</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>单曲保存URL地址</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.4、4.单曲删除</h3><div style="margin-left:30px;"><ul>
+<li>用户删除单曲的接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/deloneMusic</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">songid</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>单曲对应的Id</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.5、5.单曲重新上架</h3><div style="margin-left:30px;"><ul>
+<li>用户单曲重新上架接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/uponeMusic</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">songid</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>单曲对应的ID</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.6、6.单曲查找</h3><div style="margin-left:30px;"><ul>
+<li>用户单曲的查找接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/findMusic</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">findinput</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>需要查找的内容</td>
+</tr>
+</tbody>
+</table>
+<p>*当输入为空时，则返回全部</p></div><h3>2.2.7、7.根据种类查找</h3><div style="margin-left:30px;"><ul>
+<li>用户注册接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/findkindMusic</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">kindname</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>对应数据库的种类</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.8、8.根据专辑名分类</h3><div style="margin-left:30px;"><ul>
+<li>用户专辑分类接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/findspecialMusic</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">specialname</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">string</td>
+<td>专辑名</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.9、9.根据歌手分类</h3><div style="margin-left:30px;"><ul>
+<li>用户注册接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/listMusic</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">singer</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>歌手名</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.10、10.播放时触发的增加点击量</h3><div style="margin-left:30px;"><ul>
+<li>用户点击量接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/playOneMusic</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">songid</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>对应单曲的id</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.11、11.点击量排行榜</h3><div style="margin-left:30px;"><ul>
+<li>排行榜接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/musicClickTop</code></li>
+</ul>
+<p><strong>直接调用，无需传参</strong> </p></div><h3>2.2.12、12.下载排行榜</h3><div style="margin-left:30px;"><ul>
+<li>排行榜接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/musicDownTop</code></li>
+</ul>
+<p><strong>直接调用，无需传参</strong> </p></div><h3>2.2.13、13.显示所有需要处理的音乐</h3><div style="margin-left:30px;"><ul>
+<li>排行榜接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/upMusicData</code></li>
+</ul>
+<p><strong>直接调用，无需传参</strong> </p></div><h3>2.2.14、14.处理重新上架的音乐</h3><div style="margin-left:30px;"><ul>
+<li>用户注册接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/upDateMusic</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">singer</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>歌手</td>
+</tr>
+<tr>
+<td style="text-align: left;">songbrief</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>简介</td>
+</tr>
+<tr>
+<td style="text-align: left;">songspecial</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>专辑</td>
+</tr>
+<tr>
+<td style="text-align: left;">songkind</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>分类</td>
+</tr>
+<tr>
+<td style="text-align: left;">songid</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>歌曲Id</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.15、15.随机抽取一首歌，用于私人Fm</h3><div style="margin-left:30px;"><ul>
+<li>排行榜接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/randomMusic</code></li>
+</ul>
+<p><strong>直接调用，无需传参</strong> </p></div><h3>2.2.16、16.判断是否存在专辑名</h3><div style="margin-left:30px;"><ul>
+<li>提前判断是否存在专辑名接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/AsAlbumname</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">albumname</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>专辑名</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.17、17.添加专辑</h3><div style="margin-left:30px;"><ul>
+<li>添加专辑接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/addoneAlbum</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">albumname</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>专辑名</td>
+</tr>
+<tr>
+<td style="text-align: left;">singer</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>歌手名对应id</td>
+</tr>
+<tr>
+<td style="text-align: left;">albumbrief</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>专辑简介</td>
+</tr>
+<tr>
+<td style="text-align: left;">albumcover</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>专辑对应的封面url地址</td>
+</tr>
+<tr>
+<td style="text-align: left;">albumkind</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>专辑对应种类</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.18、18.删除专辑</h3><div style="margin-left:30px;"><ul>
+<li>删除专辑接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/deloneAlbum</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">albumid</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>专辑对应的id</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p>这里的删除是删除数据库的对应数据，会将该专辑下所有歌曲变成重新上架的状态</p></div><h3>2.2.19、19.查找专辑</h3><div style="margin-left:30px;"><ul>
+<li>查找专辑接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/findoneAlbum</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">findInput</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>查找的字符串</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.20、20.所有专辑的数据</h3><div style="margin-left:30px;"><ul>
+<li>所有专辑数据的接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/selAlbums</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">pageNum</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>页数</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.21、21.修改专辑</h3><div style="margin-left:30px;"><ul>
+<li>用户注册接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/revoneAlbum</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">albumname</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>专辑名</td>
+</tr>
+<tr>
+<td style="text-align: left;">singer</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>歌手对应的id</td>
+</tr>
+<tr>
+<td style="text-align: left;">albumbrief</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>专辑简介</td>
+</tr>
+<tr>
+<td style="text-align: left;">albumkind</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>专辑种类</td>
+</tr>
+<tr>
+<td style="text-align: left;">albumcover</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>专辑封面url地址</td>
+</tr>
+<tr>
+<td style="text-align: left;">albumid</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>专辑对应的id</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.22、22.分类对应下的专辑</h3><div style="margin-left:30px;"><ul>
+<li>各种种类对应下的接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/kindAlbums</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">kindname</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>种类的字符串</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.23、23.每个歌手对应下的专辑</h3><div style="margin-left:30px;"><ul>
+<li>歌手对应下的专辑接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/singoneAlbum</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">singer</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>对应歌手的字符串</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.24、24.判断是否已存在歌手</h3><div style="margin-left:30px;"><ul>
+<li>判断是否存在歌手名接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/asSingername</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">singername</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>歌手名</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.25、25.添加歌手信息</h3><div style="margin-left:30px;"><ul>
+<li>添加歌手信息接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/addoneSinger</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">singername</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>歌手名</td>
+</tr>
+<tr>
+<td style="text-align: left;">singerbrief</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>歌手简介</td>
+</tr>
+<tr>
+<td style="text-align: left;">singercover</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>歌手封面url地址</td>
+</tr>
+<tr>
+<td style="text-align: left;">singkind</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>歌手种类</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.26、26.删除歌手</h3><div style="margin-left:30px;"><ul>
+<li>歌手删除接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/deloneSinger</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">singerid</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>对应的歌手的id</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.27、27.查找歌手</h3><div style="margin-left:30px;"><ul>
+<li>查找歌手接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/findSinger</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">findInput</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>查找的字符串</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.28、28.所有歌手的信息</h3><div style="margin-left:30px;"><ul>
+<li>所有歌手信息接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/selSingers</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">pageNum</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>页数</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.29、29.修改歌手的信息</h3><div style="margin-left:30px;"><ul>
+<li>修改歌手信息接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/revoneSinger</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">singername</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>歌手名</td>
+</tr>
+<tr>
+<td style="text-align: left;">singerbrief</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>歌手简介</td>
+</tr>
+<tr>
+<td style="text-align: left;">singercover</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>歌手封面url地址</td>
+</tr>
+<tr>
+<td style="text-align: left;">singkind</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>歌手种类</td>
+</tr>
+<tr>
+<td style="text-align: left;">singerid</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>歌手对应的id</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.30、30.根据首字母查找</h3><div style="margin-left:30px;"><ul>
+<li>根据首字母查找接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/kindSinger</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">singerFt</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>首字母</td>
+</tr>
+</tbody>
+</table></div><h3>2.2.31、31.根据首字母排序</h3><div style="margin-left:30px;"><ul>
+<li>根据首字母排序接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/music/singerFt</code></li>
+</ul></div></div><h2>2.3、上传以及下载部分</h2><div style="margin-left:20px;"><h3>2.3.1、上传文件</h3><div style="margin-left:30px;"><ul>
+<li>用户上传接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/fs/upload</code>
+'</li>
+</ul>
+<p><strong>在form表单中使用</strong></p></div><h3>2.3.2、下载单曲</h3><div style="margin-left:30px;"><ul>
+<li>用户下载接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li>
+<p><code>http://120.78.75.213:8080/cloudmusic/fs/downOneMusic</code></p>
+</li>
+<li>需要先登录</li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">songid</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">int</td>
+<td>对应歌曲的id</td>
+</tr>
+</tbody>
+</table></div></div><h2>2.4、功能列表</h2><div style="margin-left:20px;"><h3>2.4.1、第一级功能列表</h3><div style="margin-left:30px;"><ul>
+<li>第一级功能列表接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/fc/Level01</code></li>
+</ul></div><h3>2.4.2、第二级功能列表</h3><div style="margin-left:30px;"><ul>
+<li>第二级功能列表接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/fc/Level02</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">level01name</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>选中第一级功能对应的字符串</td>
+</tr>
+</tbody>
+</table></div><h3>2.4.3、第三级功能列表</h3><div style="margin-left:30px;"><ul>
+<li>用户注册接口</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://120.78.75.213:8080/cloudmusic/fc/Level03</code></li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">level02name</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">String</td>
+<td>第二级功能对应的字符串</td>
+</tr>
+</tbody>
+</table></div></div></div><h1>3、Web前端需求功能</h1><div style="margin-left:20px;"><h2>3.1、项目简介</h2><div style="margin-left:20px;"><p>。。。。。。
+在满足基本的需求上，会添加会员的功能，成为会员的话，上传云端的音乐数量上升至300首，以及没又广告等等。。。
+至于如何成为会员，则需要想想
+用户注册会尽量加入短信的注册，验证码的注册等等</p>
+<hr>
+<p>暂时想法会有两套东西：1.为后台的音乐管理系统
+里面会包括音乐单曲的管理，用户内容的管理，专辑的管理等等功能
+2.为给用户体验的界面，其内容会根据网易云音乐的软件进行改修</p></div><h2>3.1、功能一：发现音乐</h2><div style="margin-left:20px;"><h3>3.1.1、个性推荐</h3><div style="margin-left:30px;"><p>个人推荐功能，
+1.里面包括了每日推荐（20首随机歌曲），
+2.个人推荐页也是项目的首页（index），
+3.所以包括轮播图，轮播图为新发行的专辑。
+4.随机每次刷新是都是随机生成7个歌单，和每日推荐一起显示
+5.最新音乐--根据新上传的音乐，显示前10条最新的音乐歌曲
+6.。。等等</p></div><h3>3.1.2、歌单</h3><div style="margin-left:30px;"><p>会随机排序生成多个歌单，每个大概显示10左右，具体显示会根据需求修改
+会添加筛选，根据不同种类进行筛选</p></div><h3>3.1.3、排行榜</h3><div style="margin-left:30px;"><p>各类的排行榜：
+1.下载榜
+2.热播榜
+3.新歌榜
+4.歌手榜</p></div><h3>3.1.4、歌手</h3><div style="margin-left:30px;"><p>根据歌手首字母进行筛选。初步决定为每个字母大概3个歌手，有些会超出，但具体的内容还需细细思考</p></div></div><h2>3.2、功能二：私人FM以及视频</h2><div style="margin-left:20px;"><h3>3.2.1、私人FM</h3><div style="margin-left:30px;"><p>会随机产生一首歌，下首歌也会随机生成</p></div><h3>3.2.2、视频</h3><div style="margin-left:30px;"><p>视频会分类，一是mv 二是搞笑娱乐或者其他的视频
+同样每次刷新都会随机排序，传给前端</p></div></div><h2>3.3、功能三：个人的功能</h2><div style="margin-left:20px;"><h3>3.3.1、下载记录</h3><div style="margin-left:30px;"><p>会保留自己的下载音乐的记录，</p></div><h3>3.3.2、我的音乐云盒</h3><div style="margin-left:30px;"><p>可以存在云端，但每个用户限制存储200条</p></div><h3>3.3.3、我的收藏</h3><div style="margin-left:30px;"><p>加入收藏。可以查找自己的收藏记录</p></div><h3>3.3.4、查看自己的歌单以及新建歌单</h3><div style="margin-left:30px;"><p>这里会涉及歌单增删查改，暂时只能在这里新建歌单，不给单曲添加歌单，等以后扩展时再添加</p></div><h3>3.3.5、个人信息</h3><div style="margin-left:30px;"><p>个人信息的修改
+也包括自己已下载的数量，收藏的数量。查看自己是否为会员等等功能</p></div></div><h2>3.4、功能四：管理员功能</h2><div style="margin-left:20px;"><h3>3.4.1、音乐管理</h3><div style="margin-left:30px;"><p>从歌手名称，专辑名称，单曲名称对音乐进行排序
+实现对歌曲的增删查改</p></div><h3>3.4.2、用户信息管理</h3><div style="margin-left:30px;"><p>实现对用户信息的增删查改</p></div><h3>3.4.3、用户云端管理</h3><div style="margin-left:30px;"><p>对用户所上传的文件进行存储</p></div><h3>3.4.4、评论管理</h3><div style="margin-left:30px;"><p>管理员对用户的评论进行增删查</p></div><h3>3.4.5、视频管理</h3><div style="margin-left:30px;"><p>从视频名称，作者对视频进行排序
+实现对视频的增删查改</p></div></div></div><h1>4、学习与总结</h1><div style="margin-left:20px;"><h2>4.1、帅气的俊涛</h2><div style="margin-left:20px;"><h3>4.1.1、总结概述</h3><div style="margin-left:30px;"><p>欢迎使用ShowDoc！</p></div></div><h2>4.2、佳博</h2><div style="margin-left:20px;"></div><h2>4.3、攀宇</h2><div style="margin-left:20px;"></div></div></body></html>

@@ -1,0 +1,716 @@
+
+        <html xmlns:v="urn:schemas-microsoft-com:vml"
+        xmlns:o="urn:schemas-microsoft-com:office:office"
+        xmlns:w="urn:schemas-microsoft-com:office:word"
+        xmlns="http://www.w3.org/TR/REC-html40">
+        <head><meta http-equiv=Content-Type content="text/html;  
+        charset=utf-8">
+        <style type="text/css">
+            table  
+            {  
+                border-collapse: collapse;
+                border: none;  
+                width: 100%;  
+            }  
+            td  
+            {  
+                border: solid #CCC 1px;  
+            }  
+            .codestyle{
+                word-break: break-all;
+                background:silver;mso-highlight:silver;
+            }
+        </style>
+        <meta name=ProgId content=Word.Document>
+        <meta name=Generator content="Microsoft Word 11">
+        <meta name=Originator content="Microsoft Word 11">
+        <xml><w:WordDocument><w:View>Print</w:View></xml></head>
+        <body><h1>1、简介</h1><div style="margin-left:20px;"><h2>1.1、ES6的简介</h2><div style="margin-left:20px;"><p>ES6（又名 ES2105）是 JavaScript 语言的新标准，2015 年 6 月正式发布后，得到了迅速推广，是目前业界超级活跃的计算机语言。《ES6标准入门（第2版）》是国内仅有的一本 ES6 教程，在前版基础上增补了大量内容——对标准进行了彻底的解读，所有新增的语法知识（包括即将发布的 ES7）都给予了详细介绍，并且紧扣业界开发实践，给出了大量简洁易懂、可以即学即用的示例代码。-</p></div></div><h1>2、ES6知识点</h1><div style="margin-left:20px;"><h2>2.1、知识1:ES6转码ES5</h2><div style="margin-left:20px;"><p>背景:在ES6刚发布时，只有Chrome 浏览器才内置能运行ES6，所以在当时想运行ES6的代码，便需要代码的打包工具，其中<strong>basel-cli</strong>是轻量的打包工具，可以直接通过指令进行打包，其中也需要搭配插件才能进行使用，例如:<strong>basel-preset-es2015</strong>,在运行指令前，需要创建 <strong>.babelrc</strong> 文件、文件的内容为：</p>
+<table width='100%' class='codestyle'><pre><code>  {
+    {
+    'presets': [
+        'es2015'
+    ],
+    'plugins': []
+}
+  }</code></pre></table>
+<hr>
+<p>之后运行指令：
+<strong>babel src/index.js -o dist/index.js</strong></p>
+<h4>
+src/index.js =>表示为需要转码的里面包含ES6代码的文件
+dist/index.js =>表示为转化ES6代码成功后的包含ES5代码的文件(页面引用的也是这个文件)
+</h4>
+<h3>
+Vue 里面的webpack已经自带了打包工具
+
+</h3></div><h2>2.2、知识2：ES6声明变量的扩展</h2><div style="margin-left:20px;"><h3>
+ES6新特性：声明变量的扩展
+</h3>
+<hr>
+<p>在ES5中，声明变量只有 <strong>var</strong>，而且是个动态变量，有时会引起全局变量的污染。
+例如：for(var i=0;i<5;i++){
+console.log(arg[i])
+}
+console.log('i是：'+i)</p>
+<hr>
+<p>输出:(1 2 3 4 5） i是：5
+原因：var 声明的变量，在局部调用时，会引起变量的提升，造成局部声明的 i 为全局变量
+缺点：假如当其他地方也会有到i时，触发这个方法时，会引起i值的改变，从而造成项目的错误，而且这种错误是不会提示的，所以有时会一脸蒙蔽,而ES6的let 便是解决这个问题.</p>
+<hr>
+<p><strong>扩展的声明变量</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">变量名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">let</td>
+<td>区域/局部变量的声明，当在该方法中声明的变量，在这个方法外是调用不到，除非return</td>
+</tr>
+<tr>
+<td style="text-align: left;">const</td>
+<td>常量的声明，当用这个声明后，该变量的值是不允许改变的，当发生改变时，会报错。一般用于全局变量，类 权限/固定地址/数据信息等等</td>
+</tr>
+</tbody>
+</table>
+<p><strong>let的优点</strong>
+通过let声明的变量只能用于局部，</p>
+<ol>
+<li>优点一便是不会引起全局变量的污染，已经可以变相的解决的闭包的问题。（在ES5的时候 闭包便可以用来解决var变量提升的问题）</li>
+<li>
+<p>例如举例一个很有趣的例子:
+如果通过var声明，则为：</p>
+<p>for (var i = 0; i < 5; i++) {
+setTimeout(function () {
+console.log(i, new Date())
+}, 1000)
+}
+console.log(i, new Date())</p>
+</li>
+</ol>
+<p>输出的结果为：
+<img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-20/5ba317a942224.png" alt="" /></p>
+<hr>
+<p>很明显这并不是我们需要的结果，但如果用let声明则为：</p>
+<table width='100%' class='codestyle'><pre><code>for (let i = 0; i < 5; i++) {
+    setTimeout(function () {
+        console.log(i, new Date())
+    }, 1000)
+}
+console.log(i, new Date())</code></pre></table>
+<p>输出的结果为：
+<img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-20/5ba318462aa03.png" alt="" />
+这便是我们需要的结果</p>
+<hr>
+<p>但这里还是存在一个问题，便是new Date（）的时间为同一个，这便是一个有趣的地方，虽然这个我也还没弄懂，所以暂时放着，等弄懂后再补充编辑。
+<strong>编辑时间为：2018.9.20</strong></p></div><h2>2.3、知识3：数据的赋值以及解构</h2><div style="margin-left:20px;"><p>在ES5中，声明多个变量，是这样操作的：
+let a =0;
+let b =1;
+let c =2;
+或者
+let a =0,b=1,c=2;
+看起来总有点不太方便,所以ES6便引入了新的赋值方法，叫<strong>解构赋值</strong>。
+例如：let [a,b,c] = [0,1,2];
+//但这种写法是需要左右两边的结构是一样的，这样才能赋值，
+若 let[a,b,c] = [0,1];
+//这样c是underfind
+当然这种写法也可以写默认值，例如：
+let[foo='true'] = [];
+或 let [foo="true",fox]=[,"ok"]
+其中也有对象的写法，（对象的写法更多用于处理接收到后台的JSON格式文件数据），例如:
+let {foo,bar}={for:"Lin",bar:"林"}
+注：当我们先用 let test； 声明后，需要通过对象的方式进行结构，则需要：
+（{test} = {test:"测试"}）;
+这样的写法，才不会报错。</p></div><h2>2.4、知识4：对象扩展运算符</h2><div style="margin-left:20px;"><p><strong>ES6 对象扩展运算符:</strong>
+在解释对象扩展运算符用处前，先抛出一个问题，是JS语言里面的一个问题：</p>
+<table width='100%' class='codestyle'><pre><code>let arr1 = ['120.78.75.213', '端口:4999', 'Showdoc'];
+let arr2 = arr1;
+console.log("arr2是", arr2);
+arr2.push("Edit");
+console.log("arr2是", arr2);
+console.log("arr1是", arr1)</code></pre></table>
+<p>输出结果为：<img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-20/5ba341eb983e9.png" alt="" /></p>
+<hr>
+<p>本来打算是，想通过push 在arr2数组中添加新的字段，但是却也同时修改了arr1，这是为什么呢，
+其中原因是：在JS中也存在缓存和内存地址这个机制，在这个代码里面 arr2 = arr1，意思是arr2直接引用的arr1的内存地址，所以当操作arr2时，也会引起arr1的操作，很明显，这种情况在平时的编程中，我们并不想遇到。
+所以ES6便引入了新的东西，叫<strong>对象扩展运算符</strong>。先看看如何使用它，方法如下:</p>
+<table width='100%' class='codestyle'><pre><code>let arr1 = ['120.78.75.213', '端口:4999', 'Showdoc'];
+let arr2 = [...arr1];
+console.log("arr2是", arr2);
+arr2.push("Edit");
+console.log("arr2是", arr2);
+console.log("arr1是", arr1);</code></pre></table>
+<p>在let arr2 = [...arr1];虽然同样是获取了arr1的值，但通过这个方法会产生新的缓存空间，所以不会受到影响。
+结果如下：
+<img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-20/5ba3443cd881a.png" alt="" /></p>
+<hr>
+<p>运用于方法中是这样的，举个例子；</p>
+<table width='100%' class='codestyle'><pre><code>function lin(...arg){
+console.log(arg[0]);
+console.log(arg[1]);
+console.log(arg[2]);
+console.log(arg[3]);
+//若不存在arg[3]，则会显示undefined
+}</code></pre></table>
+<p>当然有已确定的值，也可以用这样的方法：</p>
+<table width='100%' class='codestyle'><pre><code>function lin(star,...arg){
+console.log(star);
+console.log(arg[0]);
+console.log(arr[1]);
+}
+lin("Lin",123,123);</code></pre></table>
+<p>输出为:
+Lin 123 123</p>
+<hr>
+<h4>
+扩展运算符的应用：
+</h4>
+<p>1.扩展运算符提供了数组合并的新写法</p>
+<table width='100%' class='codestyle'><pre><code>var arr1 = ['a', 'b'];
+var arr2 = ['c'];
+var arr3 = ['d', 'e'];
+// ES5 的合并数组
+arr1.concat(arr2, arr3);
+// [ 'a', 'b', 'c', 'd', 'e' ]
+// ES6 的合并数组
+[...arr1, ...arr2, ...arr3]
+// [ 'a', 'b', 'c', 'd', 'e' ]</code></pre></table>
+<p>2.扩展运算符还可以将字符串转为真正的数组</p>
+<table width='100%' class='codestyle'><pre><code>[...'hello']
+// [ "h", "e", "l", "l", "o" ]</code></pre></table></div><h2>2.5、知识5：ES6的循环</h2><div style="margin-left:20px;"><h3>
+ES6 改进了for循环
+</h3> 
+<p>平时最常用的用法是这样的:</p>
+<table width='100%' class='codestyle'><pre><code>let arr = ['120.78.75.213', '端口:4999', 'Showdoc'];
+    for (let i = 0; i < arr.length; i++) {
+        console.log(arr[i])
+    }</code></pre></table>
+<p><img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-20/5ba34ee6899dc.png" alt="" /></p>
+<hr>
+<p>换成ES6的写法，同样有这样的效果：</p>
+<table width='100%' class='codestyle'><pre><code>let arr = ['120.78.75.213', '端口:4999', 'Showdoc'];
+       for (let val of arr) {
+        console.log(val)
+    }</code></pre></table>
+<p><img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-20/5ba34ee6899dc.png" alt="" /></p>
+<hr>
+<p>for。。。of 循环中添加了新的东西<br>假如有数组let arr = ['Lin',"林"，".com"];
+arr.keys() ==>表示获取数组的序列
+arr.entries() ==>表示获取到数组的序列和值
+用法为：</p>
+<table width='100%' class='codestyle'><pre><code>for(let items of arr){
+console.log(items)
+//常规用法 输出==>Lin 林 .com
+}</code></pre></table>
+<hr>
+<table width='100%' class='codestyle'><pre><code>for(let items of arr.keys()){
+console.log(items);
+//获取序列号 输出 ==> 0 1 2
+}</code></pre></table>
+<hr>
+<table width='100%' class='codestyle'><pre><code>for(let items of arr.entries()){
+console.log(items);
+//获取序列号和内容 输出 ==>["0 lin", "1 林", "2 .com"}
+}</code></pre></table>
+<hr>
+<table width='100%' class='codestyle'><pre><code> for (let [index, ar] of arr.entries()) {
+     console.log(index + ','+ar);
+     //输出： ==> 0,Lin  1,林  2,.com
+ }</code></pre></table></div><h2>2.6、知识6: 字符串模板</h2><div style="margin-left:20px;"><h3>
+ES6 字符串模板 
+</h3>
+<h4>
+1.字符串的拼接
+</h4>
+<p><strong>ES5</strong>中字符串拼接是需要这样的：</p>
+<table width='100%' class='codestyle'><pre><code>let str =  'Lin';
+let string = 'Welcome ' + str + 'come to there!';
+//这样的拼接有个不好的地方，就是在 **' '**之间换行时，会提示（发生）错误，而有时候有太多的 + 时，也会造成 + 使用的混乱！</code></pre></table>
+<p>所以便有了 <strong>ES6</strong> 新的字符串拼接的产生。则可以这样写：</p>
+<table width='100%' class='codestyle'><pre><code>let b = " Welcome `{str}`![](http://120.78.75.213:4999/server/../Public/Uploads/2018-09-21/5ba455ef3654c.png)come to there "
+//产生的效果一样的，另外 **`** ` 在键盘Tab键上一个键 ` **`** 之间一定要有 { } 里面可以执行JS代码，例如数字的加减`</code></pre></table>
+<p>在ES5中如果想查找，一个字符串中是否存在 XXX ，可以使用 str.indexOf("XXX"),但是这个返回的是查找字符串的位置，所以一般要跟上 str.indexOf("XXX")> 0 进行判断。
+但在ES6中只需要： str.includes("XXX") ==>返回的值为 true/flase，
+里面也有其他的用法，包括 str.startsWith("XXX") ==>判断字符串开头是否存在XXX，同样返回true/flase
+还有 str.endsWith("XX") ==>判断尾部是否存在XXX，同样返回true/flase
+以及字符串的复制, str.repeat(3) ==>后面的参数为复制 几次的意思</p>
+<h4>
+2.ES6声明二进制以及八进制
+</h4>
+<p><code>声明二进制： let bin = 0B010101; ==>21</code></p>
+<p><code>声明八进制; let oin = 0o666 ==>438</code></p>
+<h4>
+3.ES6 数值的判断 ,均返回true/false
+</h4>
+<p>Number.isFinite(0) ==>判断是否为数字，包括整数、浮点型。
+Number.isNaN(NaN) ==>判断是否为NaN
+Number。isIntger(2) ==>判断是否为整数 ，非整数可以这样判断 !Number。isIntger(2.5)
+Number.parseInt(2.1) ==>转化为整数
+Number.parseFloat(2.1) ==> 转化为浮点型
+//在JS中，整数的取值是并不是无限大，是有一定的范围的。它的最大值为:2的53次方（它是这样表示的<code>Math.pow(2,53)</code>,<code>Number.MAX_SAFE_INTEGER ==Math.pow(2,53)</code>），
+所有<code>2的53次方-1</code>便成最大安全值，当运用科学计数法时需要注意这个数值。在ES6中便添加 <strong>最大安全值/有效值 </strong> 的判断. 代码为:Number.isSafeInteger(00);</p>
+<h4>
+4.ES6中新增的数组知识
+</h4>
+<ul>
+<li>
+<p>将JSON 转换为数组</p>
+<p>let json ={
+"0": "0X0000",
+"1": "0X0001",
+"2": "0X0002",
+letgth:3
+}
+let arr= Array.from(json); ==>['0X0000','0X0001','0X00002']
+其中 Array.of（...） 可以将字符串转化为数组
+ES6 的find() 实例方法,例如：</p>
+<p>let arr = [1,2,3,4,5,6,7,8,9,10];
+console.log(arr.find(function(value,index,arr){
+return value>5;
+})) ==>6 //当成功找到到后，便不在执行，所以返回的是6</p>
+</li>
+</ul>
+<p>value ==>表示当前需要查找的值，
+index ==>表示当前数组的索引下标
+arr ==> 表示当前数组</p>
+<hr>
+<p>fill()也是一个实例的方法，填充/替换
+当我们想替换arr中的第二位置的值时，ES的写法为 arr[1] =XXX; 显得有点笨拙。
+在ES6中可以这样写：</p>
+<table width='100%' class='codestyle'><pre><code>    arr.fill("web",1,2); //需要传入三个参数，第一个为替换的内容，第二个为替换数组的位置，第三位为要替换的位置，一般是后面一位。</code></pre></table></div><h2>2.7、知识7：ES6箭头函数</h2><div style="margin-left:20px;"><h4>
+ES5的常规写法：
+</h4>
+<table width='100%' class='codestyle'><pre><code>function add(a,b){
+return a+b;
+}
+console.log(add(1,2)); =>3</code></pre></table>
+<p>*可以通过 add.length 来查看需要传入多少参数</p>
+<p>在ES6之前 'use strict' 严谨模式时必须写在页头的，但在ES6是可以写在方法内部的，例如：</p>
+<table width='100%' class='codestyle'><pre><code>function add(a,b){
+'use strict'
+return a+b;
+}</code></pre></table>
+<p>但是使用了严谨模式，add里面的参数是不能使用默认值的。
+使用ES6的箭头函数代替上面的add()的写法:</p>
+<table width='100%' class='codestyle'><pre><code>var add = (a,b)=> a+b;
+console.log(add(1,2)); =>3</code></pre></table>
+<p>当执行的代码只有一句时，可以不用加 <code>{ }</code>,但执行多行代码是需要补上，并且 <code>a+b</code> 改成 <code>return a+b</code>
+另外箭头函数里面不能使用new实例，所以箭头函数不能当构造函数使用。
+ps：什么为构造函数：</p>
+<hr>
+<p>1.在典型的oop的语言中，如java,都存在类的概念，类就是对象的模板，对象就是类的实例。但在js中不存在类的概念，js不是基于类，而是通过构造函数(constructor)和原型链（propotype chains）实现的。但在ES6中引入了类（class）这个概念，作为对象的模板，新的class写法知识让原型对象的写法更加清晰，这里不重点谈这个
+2.首先我们来详细了解下什么是构造器
+构造函数的特点：
+a:构造函数的首字母必须大写，用来区分于普通函数
+b:内部使用的this对象，来指向即将要生成的实例对象
+c:使用New来生成实例对象</p></div><h2>2.8、知识8：对象函数的结构</h2><div style="margin-left:20px;"><p>在ES5中，当我接收到后台传回来的JSON格式文件时，我们一般通过for去解析，一个一个取。但在<strong>ES6</strong>中添加了新的方法。</p>
+<table width='100%' class='codestyle'><pre><code>let obj = {
+     a: "jishupan",
+    b: "JSpang"
+ }</code></pre></table>
+<p>假如后台传回来这样的json文件，ES5时，我们获取a的值是这样的：console.log（json.a）；
+在ES6中我们可以这样写：</p>
+<table width='100%' class='codestyle'><pre><code>function fun({a,b}){
+console.log(a,b)
+}
+fun(json); =>jishupan JSpang</code></pre></table>
+<p>当然fun方法里面的参数也是可以写默认值的，比如：{a，b=2}
+<hr>数组的解构则为：<hr></p>
+<table width='100%' class='codestyle'><pre><code>let arr = ['Lin', '120.49.48.10', '.com'];
+function cun(a, b, c) {
+     console.log(a, b, c)
+ }
+ cun(...arr); =>Lin 120.49.48.10 .com</code></pre></table>
+<p>ES6中也可以通过 in 判断对象中是否存在：
+比如：console.log("a" in json); => true
+同样in也可以判断数组是否为空,比如：
+let ak =[ ,"ss", , ];
+console.log(0 in ak); =>false
+console.log(1 in ak); =>true
+<hr>数组的遍历：
+forEach ： arr.forEach(val,index)=>console.log
+filer ： arr.filter(x=>console.log(x))
+some : arr.some(x=>console.log(x))
+map(替换) : arr.map(x => 'web')                      ==>['web','web','web']
+<hr>数组的字符串化： console.log(arr.join('|')) ==>Lin|120.49.48.10|.com</p></div><h2>2.9、知识9:对象的赋值</h2><div style="margin-left:20px;"><p><strong>ES6 中对象的赋值</strong></p>
+<table width='100%' class='codestyle'><pre><code>let name = "jspang";
+let skill = "web";
+let obj = {
+  name,
+  skill
+};</code></pre></table>
+<p><img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-25/5ba9ad57454c0.png" alt="" />
+<strong>ES6允许把声明的变量直接赋值给对象。</strong></p>
+<h4>
+在平时的开发中往往会不知道后台传过来什么key值，所以在ES6中是可以通过key值的方法，对对象进行赋值。
+</h4>
+<p><strong>key 值的构建</strong>,key是从后台拿回来的</p>
+<table width='100%' class='codestyle'><pre><code>let key = "skill";
+var obj1 = {
+  [key]: obj
+};
+console.log(obj1);</code></pre></table>
+<p><img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-25/5ba9ae24770fc.png" alt="" /></p>
+<p><strong>自定义对象方法,在这里ES5和ES6是差不多的</strong></p>
+<table width='100%' class='codestyle'><pre><code>let obj2 = {
+    add: function (a, b) {
+        return a + b;
+    }
+}
+console.log(obj2.add(1, 2));  ==> 3</code></pre></table>
+<h4>
+两个对象的比较:
+</h4>
+<p><strong>对象的比较方法,以前进行对象值的比较，经常使用===来判断；</strong></p>
+<table width='100%' class='codestyle'><pre><code>var obj1 = { name: 'jspang' };
+var obj2 = { name: 'jspang' };
+console.log(obj1.name === obj2.name);//true</code></pre></table>
+<p>其中ES6为我们提供了新的比较方法：is:</p>
+<table width='100%' class='codestyle'><pre><code>var obj1 = {name:'jspang'};
+var obj2 = {name:'jspang'};
+console.log(obj1.name === obj2.name);//true
+console.log(Object.is(obj1.name,obj2.name)); //true</code></pre></table>
+<p>但=== 和 is 有什么区别呢!我们用代码来区分一下：</p>
+<table width='100%' class='codestyle'><pre><code>console.log(+0 === -0);  //true
+console.log(NaN === NaN ); //false
+console.log(Object.is(+0,-0)); //false
+console.log(Object.is(NaN,NaN)); //true</code></pre></table>
+<p>很明眼的看出了区别，其中=== 代表值的相等，is 代表严格上的相等，包括内存路劲，值等等</p>
+<h4>
+在ES6中加入了对象的合并
+</h4>
+<table width='100%' class='codestyle'><pre><code>//assign 合并对象
+ let a = { a: "jspang" }
+ let b = {     b: "技术胖" }
+ let c = {   c: "会web"}
+ let d = Object.assign(a, b, c);
+ console.log(d)</code></pre></table>
+<p><img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-25/5ba9b19726872.png" alt="" /></p></div><h2>2.10、知识10:Symbol的作用 </h2><div style="margin-left:20px;"><h3>
+Symbol 意全局标记，是一种全新的数据类型(ES6)
+</h3>
+<table width='100%' class='codestyle'><pre><code>let a = new String;                     |
+let b = new Number;                     |
+let c = new Boolean;                    |==>均为Object对象
+let d = new Array;                      |
+let e = new Object;                     |
+let f = Symbol();                   ==> Symbol数据类型</code></pre></table>
+<p><img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-25/5ba9d72f5256e.png" alt="" /></p>
+<p><strong>Symbol在对象中的应用</strong></p>
+<hr>
+<p>调用与赋值:</p>
+<table width='100%' class='codestyle'><pre><code>let jspang = Symbol("技术胖");
+let obj = {
+  [jspang]: "JSpang"
+};
+// obj[jspang] = "web"   ==>赋值
+console.log(obj[jspang]);
+console.log(obj);</code></pre></table>
+<p><img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-25/5ba9d7fc8e143.png" alt="" /></p>
+<p><strong>Symbol对象元素的保护作用</strong></p>
+<p>在对象中有很多值，但是循环输出时，并不希望全部输出，那我们就可以使用Symbol进行保护。</p>
+<p>没有保护的代码：</p>
+<table width='100%' class='codestyle'><pre><code>    let obj = {
+      name: "jspang",
+      skill: "web",
+      age: 22
+    };
+    for (let item in obj) {
+      console.log(item + ":" + obj[item]);
+    }</code></pre></table>
+<p><img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-25/5ba9d8e3dd240.png" alt="" />
+但是问题来了，我并不想显示age这个值；所以便需要引入Symbol来进行循环保护。需要把代码改成：</p>
+<table width='100%' class='codestyle'><pre><code>let obj = {
+  name: "jspang",
+  skill: "web"
+};
+let age = Symbol();
+obj[age] = 22;
+for (let item in obj) {
+  console.log(item + ":" + obj[item]);
+}
+console.log(obj[age]);</code></pre></table>
+<p><img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-25/5ba9d995611f9.png" alt="" />
+已成功的隐藏age，需要使用时，执行obj[age]</p></div><h2>2.11、知识11：Set和WeakSet数据结构</h2><div style="margin-left:20px;"><h4>
+Set的声明:
+</h4>
+<table width='100%' class='codestyle'><pre><code>let setArr = new Set(['jspang','技术胖','web','jspang']);
+console.log(setArr);//Set {"jspang", "技术胖", "web"}</code></pre></table>
+<p>Set和Array 的区别是Set不允许内部有重复的值，如果有只显示一个，相当于去重。虽然Set很像数组，但是它不是数组。</p>
+<hr>
+<p><strong>Set值的增删查:</strong>
+添加 add:</p>
+<table width='100%' class='codestyle'><pre><code>setArr.add('前端职场');
+console.log(setArr); //Set {"jspang", "技术胖", "web","前端职场"}</code></pre></table>
+<p>删除： 全删clean  单删 得delect</p>
+<table width='100%' class='codestyle'><pre><code>setArr.delete('web');
+console.log(setArr); //Set {"jspang", "技术胖"}</code></pre></table>
+<p>查找 has 返回的是true或者false。
+<code>console.log(setArr.has('jspang'));//true</code></p>
+<p>set的循环 for…of…循环：</p>
+<table width='100%' class='codestyle'><pre><code>let setArr = new Set(["jspang", "技术胖", "web", "jspang"]);
+for (let item of setArr) {
+  console.log(item);
+}</code></pre></table>
+<p><img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-25/5ba9de72050ae.png" alt="" /></p>
+<p>size属性可以获得Set值的数量。 <code>console.log(setArr.size); //3</code></p>
+<p>set的forEach循环: <code>setArr.forEach(value => console.log(value));</code></p>
+<p><img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-25/5ba9df5c97d9a.png" alt="" /></p>
+<p><strong>WeakSet的声明</strong></p>
+<table width='100%' class='codestyle'><pre><code>let weakObj=new WeakSet();
+let obj={a:'jspang',b:'技术胖'}
+let obj1=obj;
+weakObj.add(obj);
+weakObj.add(obj1);
+console.log(weakObj);</code></pre></table>
+<p><img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-25/5ba9e057de9a2.png" alt="" /></p>
+<p>总结：在实际开发中Set用的比较多，WeakSet用的并不多，但是他对传入值必须是对象作了很好的判断，我们灵活应用还是有一定的用处的。</p></div><h2>2.12、知识12：Map数据结构</h2><div style="margin-left:20px;"><p>map是一种灵活，简单的适合一对一查找的数据结构。
+<strong>Json和map格式的对比，map的效率和灵活性更好</strong></p>
+<p>先来写一个JSON，这里我们用对象进行模拟操作。</p>
+<table width='100%' class='codestyle'><pre><code>let json = {
+    name:'jspang',
+    skill:'web'
+}
+console.log(json.name); //jspang</code></pre></table>
+<p>但是这种反应的速度要低于数组和map结构。而且Map的灵活性要更好，你可以把它看成一种特殊的键值对，但你的key可以设置成数组，值也可以设置成字符串，让它不规律对应起来。</p>
+<table width='100%' class='codestyle'><pre><code>let json = {
+  name: "jspang",
+  skill: "web"
+};
+var map = new Map();
+map.set(json, "iam");
+console.log(map);</code></pre></table>
+<p><img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-25/5ba9e4114558a.png" alt="" /></p>
+<p>当然也可key字符串，value是对象。我们调换一下位置，依然是符合map的数据结构规范的。</p>
+<table width='100%' class='codestyle'><pre><code>map.set('jspang',json);
+console.log(map);</code></pre></table>
+<p><img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-25/5ba9e4754aa35.png" alt="" /></p>
+<p><strong>map的增删查</strong>
+map的增值就是通过set来添加。<code>map.set("keyh","hello");</code>
+map的拿值则是:<code>map.get("json");</code><img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-25/5ba9e5b177bdc.png" alt="" />
+map删除： 指定删除（delect），全部删除（clear）</p>
+<table width='100%' class='codestyle'><pre><code>map.delete('json');
+map.clear()</code></pre></table>
+<p>size属性  <code>console.log(map.size);</code></p>
+<p>查找是否存在has(返回true/false) <code>consolec .log(map.has('jspang'))</code></p></div><h2>2.13、知识13：Proxy进行预处理</h2><div style="margin-left:20px;"><p>Proxy类似于钩子函数。
+当我们在操作一个对象或者方法时会有几种动作，比如：在运行函数前初始化一些数据，在改变对象值后做一些善后处理。这些都算钩子函数，Proxy的存在就可以让我们给函数加上这样的钩子函数，你也可以理解为在执行方法前预处理一些代码。你可以简单的理解为他是函数或者对象的生命周期。
+Proxy的应用可以使函数更加强大，业务逻辑更加清楚，而且在编写自己的框架或者通用组件时非常好用。Proxy涉及的内容非常多.</p>
+<p><strong>定义对象的方法：</strong></p>
+<table width='100%' class='codestyle'><pre><code>var obj={
+    add:function(val){
+        return val+10;
+    },
+    name:'I am Jspang'
+};
+console.log(obj.add(100)); //110
+console.log(obj.name);  //I am Jspang</code></pre></table>
+<h4>声明Proxy: new Proxy({},{})</h4>
+<p>
+需要注意的是这里是两个花括号，第一个花括号就相当于我们方法的主体，后边的花括号就是Proxy代理处理区域，相当于我们写钩子函数的地方。
+</p>
+<table width='100%' class='codestyle'><pre><code>var pro = new Proxy({
+    add: function (val) {
+        return val + 10;
+    },
+    name: 'I am Jspang'
+}, {
+        get:function(target,key,property){
+            console.log('come in Get');
+            return target[key];
+        }
+    });
+console.log(pro.name);</code></pre></table>
+<p>会先执行get里面的方法，属性是在你得到某对象属性值时预处理的方法,其中get需要传递的参数为:
+target：得到的目标值
+key：目标的key值，相当于对象的属性
+property：这个不太常用，用法还在研究中，还请大神指教。</p>
+<p><img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-25/5ba9e82e61f93.png" alt="" /></p>
+<table width='100%' class='codestyle'><pre><code>var pro = new Proxy({
+    add: function (val) {
+        return val + 10;
+    },
+    name: 'I am Jspang'
+}, {
+        get:function(target,key){
+            console.log('come in Get');
+            return target[key];
+        },
+        set:function(target,key,value,receiver){
+            console.log(`    setting ${key} = ${value}`);
+            return target[key] = value;
+        }
+    });
+console.log(pro.name);
+pro.name='技术胖';
+console.log(pro.name);</code></pre></table>
+<p>set属性是值你要改变Proxy属性值时，进行的预先处理。它需要接收四个参数。
+target:目标值。
+key：目标的Key值。
+value：要改变的值。
+receiver：改变前的原始值。
+<img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-25/5ba9eb1546040.png" alt="" /></p>
+<p><strong>apply的作用是调用内部的方法，它使用在方法体是一个匿名函数时。看下边的代码。</strong></p>
+<table width='100%' class='codestyle'><pre><code>//apply 方法的处理
+let target = function() {
+  return "I am JSpang!";
+};
+let handler = {
+  apply(target, ctx, args) {
+    console.log("do apply!");
+    return Reflect.apply(...arguments);
+  }
+};
+
+let pro1 = new Proxy(target, handler);
+console.log(pro1());</code></pre></table>
+<p><img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-25/5ba9ebf52e440.png" alt="" /></p>
+<p>其实proxy的知识是非常多的，有空看下的时候再回来补充.</p></div><h2>2.14、知识14：promise对象的使用</h2><div style="margin-left:20px;"><p>ES6中的promise的出现给我们很好的解决了回调地域的问题，在使用ES5的时候，在多层嵌套回调时，写完的代码层次过多，很难进行维护和二次开发，ES6认识到了这点问题，现在promise的使用，完美解决了这个问题.</p>
+<hr>
+<p><strong>promise的基本用法：</strong>
+假如我们需要做三个步骤：
+1.洗菜做饭 2.坐下吃饭 3.收拾洗碗
+上面的步骤是需要完成上一步，才能往下走。如何用ES5的写法，则需要一层一层的嵌套。这样不利于后续的维护.
+所以我们现在用promise来解决：</p>
+<table width='100%' class='codestyle'><pre><code>let state=1;
+function step1(resolve,reject){
+    console.log('1.开始-洗菜做饭');
+    if(state==1){
+        resolve('洗菜做饭--完成');
+    }else{
+        reject('洗菜做饭--出错');
+    }
+}
+function step2(resolve,reject){
+    console.log('2.开始-坐下来吃饭');
+    if(state==1){
+        resolve('坐下来吃饭--完成');
+    }else{
+        reject('坐下来吃饭--出错');
+    }
+}
+function step3(resolve,reject){
+    console.log('3.开始-收拾桌子洗完');
+     if(state==1){
+        resolve('收拾桌子洗完--完成');
+    }else{
+        reject('收拾桌子洗完--出错');
+    }
+}
+new Promise(step1).then(function(val){
+    console.log(val);
+    return new Promise(step2);
+}).then(function(val){
+     console.log(val);
+    return new Promise(step3);
+}).then(function(val){
+    console.log(val);
+    return val;
+});</code></pre></table>
+<p>输出：<img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-25/5ba9ed4e01d9e.png" alt="" />
+若中间不通过，或者出错，则会<img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-25/5ba9ed89a828f.png" alt="" />。
+所以promise 很适合那种按照步骤进行操作的程序，例如：注册账号时，会先判断用户名是否存在，然后再判断邮箱是否有效，接着确认密码格式对不对，最后才能写入数据库。
+promise也可以操作异步，这个会后续去补充。</p></div><h2>2.15、知识15：class类的使用</h2><div style="margin-left:20px;"><p>
+我们在ES5中经常使用方法或者对象去模拟类的使用，虽然可以实现功能，但是代码并不优雅，ES6为我们提供了类的使用。需要注意的是我们在写类的时候和ES5中的对象和构造函数要区分开来，不要学混了
+</p>
+<h4>
+类的声明:
+</h4>
+<table width='100%' class='codestyle'><pre><code>class coder{
+    name(val){
+        console.log(val);
+    }
+}</code></pre></table>
+<p>声明了coder这个类。
+<strong>类的使用：</strong></p>
+<table width='100%' class='codestyle'><pre><code>class Coder{
+    name(val){
+        console.log(val);
+    }
+}
+let jspang= new Coder;
+jspang.name('jspang'); //jspang</code></pre></table>
+<p><strong>类的多方法的声明</strong></p>
+<table width='100%' class='codestyle'><pre><code>class Coder{
+    name(val){
+        console.log(val);
+        return val;
+    }
+    skill(val){
+        console.log(this.name('jspang')+':'+'Skill:'+val);
+    }
+}
+let jspang= new Coder;
+jspang.name('jspang');
+jspang.skill('web');</code></pre></table>
+<p>这里需要注意的是两个方法中间不要写逗号了，还有这里的this指类（coder）本身，还有要注意return 的用法。
+<strong>类的传参</strong>
+在类的参数传递中我们用constructor( )进行传参。传递参数后可以直接使用this.xxx进行调用。</p>
+<table width='100%' class='codestyle'><pre><code>class Coder{
+    name(val){
+        console.log(val);
+        return val;
+    }
+    skill(val){
+        console.log(this.name('jspang')+':'+'Skill:'+val);
+    }
+    constructor(a,b){
+        this.a=a;
+        this.b=b;
+    }
+    add(){
+        return this.a+this.b;
+    }
+}
+let jspang=new Coder(1,2);
+console.log(jspang.add());</code></pre></table>
+<p>我们用constructor来约定了传递参数，然后用作了一个add方法，把参数相加。这和以前我们的传递方法有些不一样，所以需要小伙伴们多注意下。</p>
+<p><strong>ES6类的继承</strong></p>
+<table width='100%' class='codestyle'><pre><code>class htmler extends Coder{
+}
+let pang=new htmler;
+pang.name('技术胖');</code></pre></table>
+<p>声明一个htmler的新类并继承Coder类，htmler新类里边为空，这时候我们实例化新类，并调用里边的name方法。结果也是可以调用到的。</p></div><h2>2.16、知识16：模块化操作</h2><div style="margin-left:20px;"><p>在ES5中我们要进行模块华操作需要引入第三方类库，随着前后端分离，前端的业务日渐复杂，ES6为我们增加了模块话操作。模块化操作主要包括两个方面。</p>
+<ul>
+<li>export :负责进行模块化，也是模块的输出。</li>
+<li>import : 负责把模块引，也是模块的引入操作。</li>
+</ul>
+<p>export的用法：</p>
+<p>export可以让我们把变量，函数，对象进行模块话，提供外部调用接口，让外部进行引用。先来看个最简单的例子，把一个变量模块化。我们新建一个temp.js文件，然后在文件中输出一个模块变量。</p>
+<table width='100%' class='codestyle'><pre><code>export var a = 'jspang';</code></pre></table>
+<p>然后可以在index.js中以import的形式引入。</p>
+<table width='100%' class='codestyle'><pre><code>import {a} from './temp.js';
+console.log(a);</code></pre></table>
+<p>这就是一个最简单的模块的输出和引入。</p>
+<p><strong>多变量的输出</strong></p>
+<p>这里声明了3个变量，需要把这3个变量都进行模块化输出，这时候我们给他们包装成对象就可以了。</p>
+<table width='100%' class='codestyle'><pre><code>var a ='jspang';
+var b ='技术胖';
+var c = 'web';
+export {a,b,c}</code></pre></table>
+<p>函数的模块化输出</p>
+<table width='100%' class='codestyle'><pre><code>export function add(a,b){
+    return a+b;
+}</code></pre></table>
+<p>as的用法 有些时候我们并不想暴露模块里边的变量名称，而给模块起一个更语义话的名称，这时候我们就可以使用as来操作。</p>
+<table width='100%' class='codestyle'><pre><code>var a ='jspang';
+var b ='技术胖';
+var c = 'web';
+export {
+    x as a,
+    y as b,
+    z as c
+}</code></pre></table>
+<p>export default的使用 加上default相当是一个默认的入口。在一个文件里export default只能有一个。我们来对比一下export和export default的区别</p>
+<p>1.export</p>
+<table width='100%' class='codestyle'><pre><code>export var a ='jspang';
+export function add(a,b){
+    return a+b;
+}</code></pre></table>
+<p>对应的导入方式</p>
+<table width='100%' class='codestyle'><pre><code>import {a,add} form './temp';//也可以分开写</code></pre></table>
+<p>2.export defalut</p>
+<table width='100%' class='codestyle'><pre><code>export default var a='jspang';</code></pre></table>
+<p>对应的引入方式</p>
+<table width='100%' class='codestyle'><pre><code>import str from './temp';</code></pre></table></div></div></body></html>

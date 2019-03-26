@@ -1,0 +1,1959 @@
+
+        <html xmlns:v="urn:schemas-microsoft-com:vml"
+        xmlns:o="urn:schemas-microsoft-com:office:office"
+        xmlns:w="urn:schemas-microsoft-com:office:word"
+        xmlns="http://www.w3.org/TR/REC-html40">
+        <head><meta http-equiv=Content-Type content="text/html;  
+        charset=utf-8">
+        <style type="text/css">
+            table  
+            {  
+                border-collapse: collapse;
+                border: none;  
+                width: 100%;  
+            }  
+            td  
+            {  
+                border: solid #CCC 1px;  
+            }  
+            .codestyle{
+                word-break: break-all;
+                background:silver;mso-highlight:silver;
+            }
+        </style>
+        <meta name=ProgId content=Word.Document>
+        <meta name=Generator content="Microsoft Word 11">
+        <meta name=Originator content="Microsoft Word 11">
+        <xml><w:WordDocument><w:View>Print</w:View></xml></head>
+        <body><h1>1、① 简介</h1><div style="margin-left:20px;"><p>在看完技术胖的koa2教学视频后，我便产生了一个疑问，那边如何使用koa2写的后台，如何与前端的html等文件一起使用，在技术胖中提到了<code>ejs</code>，但是还是有点懵逼，所以便在网上找到了这篇文章.
+<a href="https://blog.csdn.net/wclimb/article/details/77890793">https://blog.csdn.net/wclimb/article/details/77890793</a>,
+也在github拉取了他的项目：<a href="https://github.com/wclimb/Koa2-blog">https://github.com/wclimb/Koa2-blog</a> 。
+所以特意写笔记来拆解它的项目，对自己的node的理解有更加的提升.</p></div><h1>2、② 开发环境</h1><div style="margin-left:20px;"><h4>需要配置好node以及mysql：</h4>
+<p>先查看node的版本：
+<code>node -v</code>
+node的版本最好是7.8 以上的，如果低于这个版本可以去官网进行升级。（linux下的升级需要百度）
+配置好并开启mysql：
+我在Ubuntu已经搭建好mysql，地址为120.78.75.213，用户名为：root，密码为：admin，端口统一为：3306。
+首先需要创建一个数据库：<strong>nodesql</strong>；
+至于下面的表暂时不创建，我们会通过koa2的sql中间件用sql语句进行创建。</p>
+<pre><code class="language-sql">会创建4个表格：
+    _mysql_session_store       ==>记录谁登陆后进行操作
+    comment    ==>记录评论
+    posts  ==>记录发表文章
+    users  ==>记录用户信息</code></pre></table>
+<h4>目录结构：（文件夹Koa2Demo里面文件）</h4>
+<p><img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-29/5baee27613fdd.png" alt="" /></p>
+<p>在github拉下来的文件是不存在依赖文件的，所以我们需要同npm 指令下载依赖:
+<code>npm install -g cnpm --registry=https://registry.npm.taobao.org</code></p>
+<p>安装模块:
+<code>npm i koa koa-bodyparser koa-mysql-session koa-router koa-session-minimal koa-static koa-views md5 moment mysql ejs markdown-it chai mocha koa-static-cache --save-dev</code></p>
+<p><strong>各个模块的用处:</strong>
+<code>koa node</code> 框架</p>
+<p><code>koa-bodyparser</code> 表单解析中间件</p>
+<p><code>koa-mysql-session</code>、<code>koa-session-minimal</code> 处理数据库的中间件</p>
+<p><code>koa-router</code> 路由中间件</p>
+<p><code>koa-static</code> 静态资源加载中间件</p>
+<p><code>ejs</code> 模板引擎</p>
+<p><code>md5</code> 密码加密</p>
+<p><code>moment</code> 时间中间件</p>
+<p><code>mysql</code> 数据库</p>
+<p><code>markdown-it</code> markdown 语法</p>
+<p><code>koa-views</code> 模板呈现中间件</p>
+<p><code>chai</code> <code>mocha</code> 测试使用</p>
+<p><code>koa-static-cache</code> 文件缓存</p>
+<h4>解释一下各个文件对应的功能：</h4>
+<p>```文件对应的作用
+--config
+---default.js（用于sql）:
+里面是一些配置文件信息,例如：
+port(启动端口) :3000
+database(连接数据库信息) {
+DATABASE(数据库名): "nodesql",
+USERNAME(同户名): "root",
+PASSWORD(密码): "admin",
+PORT(端口): "3306",
+HOST(地址): "120.78.75.213"
+}</p>
+<p>--controller
+---c-posts.js
+里面有：
+1.当进入首页时，会显示已经上传的文章：
+2.首页文章的分页，控制为输出10条
+3.个人用户自己文章的分页，同为输出10条
+4.单篇文章内容，包括评论
+5.发表文章的页面
+6.发表文章触发的方法
+7.发表评论触发的方法
+8.修改单篇文章的内容页面，以及操作方法
+9.删除单篇文章
+10.删除评论
+11.评论分页
+---c-signin.js(登出):
+获取登录信息，并有登出时的操作，注：在登录注册时运用了md5的加密，所以在这里也需要引入md5，才能进行解码。
+---c-signup.js(登录):
+1.获取登录界面
+2.登录功能时，进行的操作，里面包括md5加密，fs 输入输出流（用于保存用户头像），用户两次密码验证等等
+--lib
+---mysql.js:
+1.连接数据库，在nodesql下创建表，koa 中间件sql 中会判断是否存在数据库表，如何不存在会根据存过来的指令创建数据库表。
+2.注册 删除 查找用户
+3.发表文章、增加文章评论数、减少文章评论数、更新浏览数
+4.发表评论
+5.通过各种形式查找用户，以及文章（ID），返回数据库的内容。
+6.查询所有文章、数量、内容、分页
+7.删除 文章、评论
+8.滚动无限加载数据</p>
+<p>--middlewares
+---check.js
+里面记录成功操作后信息提示
+--node_modules
+安装好的依赖</p>
+<p>--public
+---images文件夹:存储用户的头像。
+---index.css ：存放css样式
+---pagination.js:
+页面加载css，以及分页的一些内容。</p>
+<p>--routers
+---posts.js(文章的路由):包括文章列表、分页、单篇内容、发布文章页面、删除文章、删除评论等等的路由
+---signin.js:登录的路由
+---signout.js:登出的路由
+---signup.js:注册的路由</p>
+<p>--views(页面),运用了ejs中间件，可以通过ejs对头尾进行拼接
+---create.ejs:发表文章
+---edit.ejs:编辑（修改）文章
+---footer.ejs:用于拼接页面的尾部
+---header.ejs:用于拼接页面的头部
+---posts.ejs:用户自身界面的发布文章
+---selfPosts.ejs:这个也没搞懂
+---signin.ejs:登录的页面
+---signup.ejs:注册的页面
+---sPost.ejs:首页</p>
+<p>--根目录
+---index.js:主程序
+---package.json/package-lock.json:一些项目的信息，例如作者、依赖包的名称也可以在这里找到</p>
+<table width='100%' class='codestyle'><pre><code></code></pre></table></div><h1>3、文件解析</h1><div style="margin-left:20px;"><h2>3.1、default.js</h2><div style="margin-left:20px;"><h4>配置config：</h4>
+<table width='100%' class='codestyle'><pre><code>const config = {
+  // 启动端口
+  port: 3000,
+  // 数据库配置
+  database: {
+    DATABASE: "nodesql",
+    USERNAME: "root",
+    PASSWORD: "admin",
+    PORT: "3306",
+    HOST: "120.78.75.213"
+  }
+};
+module.exports = config;</code></pre></table>
+<p>module.exports 为暴露这个数组，或者叫回调</p></div><h2>3.2、index.js</h2><div style="margin-left:20px;"><h4>配置index.js文件:</h4>
+<hr>
+<p>使用require引入对应的中间件，才能去使用。</p>
+<table width='100%' class='codestyle'><pre><code>const Koa = require('koa');
+const path = require('path')
+const bodyParser = require('koa-bodyparser');
+const ejs = require('ejs');
+const session = require('koa-session-minimal');
+const MysqlStore = require('koa-mysql-session');
+const config = require('./config/default.js');
+const router = require('koa-router')
+const views = require('koa-views')
+const staticCache = require('koa-static-cache')
+const app = new Koa()</code></pre></table>
+<p>session存储（服务器），new MysqlStore为mysql 中间件的语法，传入对应的key，值，便可以执行对应的sql语句。
+koa-session-minimald的API的使用方法： <a href="https://www.jianshu.com/p/f3df4ffe3301">https://www.jianshu.com/p/f3df4ffe3301</a></p>
+<table width='100%' class='codestyle'><pre><code>// session存储配置
+const sessionMysqlConfig= {
+  user: config.database.USERNAME,
+  password: config.database.PASSWORD,
+  database: config.database.DATABASE,
+  host: config.database.HOST,
+}
+// 配置session中间件
+app.use(session({
+  key: 'USER_SID',
+  store: new MysqlStore(sessionMysqlConfig)
+}))</code></pre></table>
+<p>koa-static-cache为查看静资源的中间件，主要是用于存储用户的头像，路径为/public/images，<code>path.join(__dirname, './public'）</code>为node原生的语句,maxAge为保存数据的市场，是已秒为单位的存储,365 <em> 24 </em> 60 * 60 代表一年：<a href="https://www.npmjs.com/package/koa-static-cache">https://www.npmjs.com/package/koa-static-cache</a></p>
+<table width='100%' class='codestyle'><pre><code>// 缓存
+app.use(staticCache(path.join(__dirname, './public'), { dynamic: true }, {
+  maxAge: 365 * 24 * 60 * 60
+}))
+app.use(staticCache(path.join(__dirname, './images'), { dynamic: true }, {
+  maxAge: 365 * 24 * 60 * 60
+}))</code></pre></table>
+<p>这个是配合ejs使用，将数据渲染于界面，所有界面均在.views 中，koa-bodyparser 为获取表单提交的信息（koa有获取get方法的值，是没有直接获取post的方法，所以便需要引入这个中间件），formLimit为控制表单提交的数据大小，默认为56kb，这里设置为1mb：<a href="https://www.npmjs.com/package/koa-bodyparser">https://www.npmjs.com/package/koa-bodyparser</a></p>
+<table width='100%' class='codestyle'><pre><code>// 配置服务端模板渲染引擎中间件
+app.use(views(path.join(__dirname, './views'), {
+  extension: 'ejs'
+}))
+app.use(bodyParser({
+  formLimit: '1mb'
+}))</code></pre></table>
+<p>路由，控制控制页面跳转：</p>
+<table width='100%' class='codestyle'><pre><code>//  路由
+app.use(require('./routers/signin.js').routes())
+app.use(require('./routers/signup.js').routes())
+app.use(require('./routers/posts.js').routes())
+app.use(require('./routers/signout.js').routes())</code></pre></table>
+<p>应用执行的端口：</p>
+<table width='100%' class='codestyle'><pre><code>app.listen(config.port)
+
+console.log(`listening on port ${config.port}`)</code></pre></table></div><h2>3.3、check.js</h2><div style="margin-left:20px;"><p>判断是否已经登录，当登录一次后如果没有 登出，会一直在线。</p>
+<table width='100%' class='codestyle'><pre><code>module.exports ={
+  // 已经登录了
+  checkNotLogin: (ctx) => {
+    if (ctx.session && ctx.session.user) {     
+      ctx.redirect('/posts');
+      return false;
+    }
+    return true;
+  },
+  //没有登录
+  checkLogin: (ctx) => {
+    if (!ctx.session || !ctx.session.user) {     
+      ctx.redirect('/signin');
+      return false;
+    }
+    return true;
+  }
+}</code></pre></table></div><h2>3.4、mysql.js</h2><div style="margin-left:20px;"><h4>配置mysql.js:</h4>
+<p>我们建立了数据库的连接池后，我们需要创建一个函数query，通过返回<code>promise</code>的方法以便可以方便用<code>.then()</code>来获取数据库返回的数据，我们定义了三个个的字段，通过<code>createTable</code>来创建我们后面所需的三个表，包括<code>posts(存储文章)</code>,<code>users（存储用户）</code>,<code>comment（存储评论）</code>,<code>create table if not exists users()</code>表示如果users表不存在则创建该表,然后定义了一大堆的方法，通过exports暴露出去。</p>
+<table width='100%' class='codestyle'><pre><code>var mysql = require('mysql');
+var config = require('../config/default.js')
+
+var pool  = mysql.createPool({
+  host     : config.database.HOST,
+  user     : config.database.USERNAME,
+  password : config.database.PASSWORD,
+  database : config.database.DATABASE,
+  port     : config.database.PORT
+});</code></pre></table>
+<p>改方法为判断是否存在数据库表，如果存在便不再新建，以免报错：</p>
+<table width='100%' class='codestyle'><pre><code>let query = ( sql, values ) => {
+  return new Promise(( resolve, reject )=> {
+    pool.getConnection( (err, connection)=> {
+      if (err) {
+        reject( err )
+      } else {
+        connection.query(sql, values, ( err, rows) => {
+          if ( err ) {
+            reject( err )
+          } else {
+            resolve( rows )
+          }
+          connection.release()
+        })
+      }
+    })
+  })
+}</code></pre></table>
+<p>建表需要的指令：</p>
+<table width='100%' class='codestyle'><pre><code>let users =
+    `create table if not exists users(
+     id INT NOT NULL AUTO_INCREMENT,
+     name VARCHAR(100) NOT NULL COMMENT '用户名',
+     pass VARCHAR(100) NOT NULL COMMENT '密码',
+     avator VARCHAR(100) NOT NULL COMMENT '头像',
+     moment VARCHAR(100) NOT NULL COMMENT '注册时间',
+     PRIMARY KEY ( id )
+    );`
+
+let posts =
+    `create table if not exists posts(
+     id INT NOT NULL AUTO_INCREMENT,
+     name VARCHAR(100) NOT NULL COMMENT '文章作者',
+     title TEXT(0) NOT NULL COMMENT '评论题目',
+     content TEXT(0) NOT NULL COMMENT '评论内容',
+     md TEXT(0) NOT NULL COMMENT 'markdown',
+     uid VARCHAR(40) NOT NULL COMMENT '用户id',
+     moment VARCHAR(100) NOT NULL COMMENT '发表时间',
+     comments VARCHAR(200) NOT NULL DEFAULT '0' COMMENT '文章评论数',
+     pv VARCHAR(40) NOT NULL DEFAULT '0' COMMENT '浏览量',
+     avator VARCHAR(100) NOT NULL COMMENT '用户头像',
+     PRIMARY KEY(id)
+    );`
+
+let comment =
+    `create table if not exists comment(
+     id INT NOT NULL AUTO_INCREMENT,
+     name VARCHAR(100) NOT NULL COMMENT '用户名称',
+     content TEXT(0) NOT NULL COMMENT '评论内容',
+     moment VARCHAR(40) NOT NULL COMMENT '评论时间',
+     postid VARCHAR(40) NOT NULL COMMENT '文章id',
+     avator VARCHAR(100) NOT NULL COMMENT '用户头像',
+     PRIMARY KEY(id) 
+    );`
+
+let createTable = ( sql ) => {
+  return query( sql, [] )
+}
+
+// 建表
+createTable(users)
+createTable(posts)
+createTable(comment)</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 注册用户
+exports.insertData = ( value ) => {
+  let _sql = "insert into users set name=?,pass=?,avator=?,moment=?;"
+  return query( _sql, value )
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 删除用户
+exports.deleteUserData = ( name ) => {
+  let _sql = `delete from users where name="${name}";`
+  return query( _sql )
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 查找用户
+exports.findUserData = ( name ) => {
+  let _sql = `select * from users where name="${name}";`
+  return query( _sql )
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 发表文章
+exports.insertPost = ( value ) => {
+  let _sql = "insert into posts set name=?,title=?,content=?,md=?,uid=?,moment=?,avator=?;"
+  return query( _sql, value )
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 增加文章评论数
+exports.addPostCommentCount = ( value ) => {
+  let _sql = "update posts set comments = comments + 1 where id=?"
+  return query( _sql, value )
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 减少文章评论数
+exports.reducePostCommentCount = ( value ) => {
+  let _sql = "update posts set comments = comments - 1 where id=?"
+  return query( _sql, value )
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 更新浏览数
+exports.updatePostPv = ( value ) => {
+  let _sql = "update posts set pv= pv + 1 where id=?"
+  return query( _sql, value )
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 发表评论
+exports.insertComment = ( value ) => {
+  let _sql = "insert into comment set name=?,content=?,moment=?,postid=?,avator=?;"
+  return query( _sql, value )
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 通过名字查找用户
+exports.findDataByName =  ( name ) => {
+  let _sql = `select * from users where name="${name}";`
+  return query( _sql)
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 通过名字查找用户数量判断是否已经存在
+exports.findDataCountByName =  ( name ) => {
+  let _sql = `select count(*) as count from users where name="${name}";`
+  return query( _sql)
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 通过文章的名字查找用户
+exports.findDataByUser =  ( name ) => {
+  let _sql = `select * from posts where name="${name}";`
+  return query( _sql)
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 通过文章id查找
+exports.findDataById =  ( id ) => {
+  let _sql = `select * from posts where id="${id}";`
+  return query( _sql)
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 通过文章id查找
+exports.findCommentById =  ( id ) => {
+  let _sql = `select * from comment where postid="${id}";`
+  return query( _sql)
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 通过文章id查找评论数
+exports.findCommentCountById =  ( id ) => {
+  let _sql = `select count(*) as count from comment where postid="${id}";`
+  return query( _sql)
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 通过评论id查找
+exports.findComment = ( id ) => {
+  let _sql = `select * from comment where id="${id}";`
+  return query( _sql)
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 查询所有文章
+exports.findAllPost = () => {
+  let _sql = `select * from posts;`
+  return query( _sql)
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 查询所有文章数量
+exports.findAllPostCount = () => {
+  let _sql = `select count(*) as count from posts;`
+  return query( _sql)
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 查询分页文章
+exports.findPostByPage = ( page ) => {
+  let _sql = ` select * from posts limit ${(page-1)*10},10;`
+  return query( _sql)
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 查询所有个人用户文章数量
+exports.findPostCountByName = (name) => {
+  let _sql = `select count(*) as count from posts where name="${name}";`
+  return query( _sql)
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 查询个人分页文章
+exports.findPostByUserPage = (name,page) => {
+  let _sql = ` select * from posts where name="${name}" order by id desc limit ${(page-1)*10},10 ;`
+  return query( _sql)
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 更新修改文章
+exports.updatePost = (values) => {
+  let _sql = `update posts set title=?,content=?,md=? where id=?`
+  return query(_sql,values)
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 删除文章
+exports.deletePost = (id) => {
+  let _sql = `delete from posts where id = ${id}`
+  return query(_sql)
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 删除评论
+exports.deleteComment = (id) => {
+  let _sql = `delete from comment where id=${id}`
+  return query(_sql)
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 删除所有评论
+exports.deleteAllPostComment = (id) => {
+  let _sql = `delete from comment where postid=${id}`
+  return query(_sql)
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 滚动无限加载数据
+exports.findPageById = (page) => {
+  let _sql = `select * from posts limit ${(page-1)*5},5;`
+  return query(_sql)
+}</code></pre></table>
+<hr />
+<table width='100%' class='codestyle'><pre><code>// 评论分页
+exports.findCommentByPage = (page,postId) => {
+  let _sql = `select * from comment where postid=${postId} order by id desc limit ${(page-1)*10},10;`
+  return query(_sql)
+}</code></pre></table>
+<p>下面为我们建的表：</p>
+<ul>
+<li>users 用户表，储存用户信息</li>
+</ul>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">字段</th>
+<th>注释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">id</td>
+<td>ID 主键递增</td>
+</tr>
+<tr>
+<td style="text-align: left;">name</td>
+<td>用户名</td>
+</tr>
+<tr>
+<td style="text-align: left;">pass</td>
+<td>密码</td>
+</tr>
+<tr>
+<td style="text-align: left;">avator</td>
+<td>头像</td>
+</tr>
+<tr>
+<td style="text-align: left;">moment</td>
+<td>创建时间</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>
+<p>备注：pass 用md5进行加密，头像也进行了转码</p>
+</li>
+<li>posts 文章表，储存用户已发表的文章信息</li>
+</ul>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">字段</th>
+<th>注释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">id</td>
+<td>ID 主键递增</td>
+</tr>
+<tr>
+<td style="text-align: left;">name</td>
+<td>文章作者</td>
+</tr>
+<tr>
+<td style="text-align: left;">title</td>
+<td>文章标题</td>
+</tr>
+<tr>
+<td style="text-align: left;">content</td>
+<td>文章内容，加了p标签</td>
+</tr>
+<tr>
+<td style="text-align: left;">md</td>
+<td>markdown需要用到的</td>
+</tr>
+<tr>
+<td style="text-align: left;">uid</td>
+<td>用户id</td>
+</tr>
+<tr>
+<td style="text-align: left;">moment</td>
+<td>发表时间</td>
+</tr>
+<tr>
+<td style="text-align: left;">comments</td>
+<td>文章评论数</td>
+</tr>
+<tr>
+<td style="text-align: left;">pv</td>
+<td>浏览量</td>
+</tr>
+<tr>
+<td style="text-align: left;">avator</td>
+<td>头像</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>
+<p>备注：需要将表单标题和内容改为utf-8，默认为 latin1</p>
+</li>
+<li>comment 评论表，储存用户已发部的评论信息</li>
+</ul>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">字段</th>
+<th>注释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">id</td>
+<td>ID 主键递增</td>
+</tr>
+<tr>
+<td style="text-align: left;">name</td>
+<td>用户名</td>
+</tr>
+<tr>
+<td style="text-align: left;">content</td>
+<td>评论内容</td>
+</tr>
+<tr>
+<td style="text-align: left;">moment</td>
+<td>评论时间</td>
+</tr>
+<tr>
+<td style="text-align: left;">postid</td>
+<td>文章id</td>
+</tr>
+<tr>
+<td style="text-align: left;">avator</td>
+<td>y用户头像</td>
+</tr>
+</tbody>
+</table></div><h2>3.5、signout.js</h2><div style="margin-left:20px;"><p>登出</p>
+<table width='100%' class='codestyle'><pre><code>const router = require('koa-router')();
+router.get('/signout', async(ctx, next) => {
+    ctx.session = null;
+    console.log('登出成功')
+    ctx.body = true
+})
+
+module.exports = router</code></pre></table></div><h2>3.6、pagination.js</h2><div style="margin-left:20px;"><table width='100%' class='codestyle'><pre><code>function pagination(data, callback) {
+    // css样式
+    if (!document.getElementById('pageStyle')) {
+        var style = document.createElement('style')
+        style.id = 'pageStyle'
+        style.innerHTML = '.pagination{text-align:center;margin-top:100px}.pagination a,.pagination span{margin:0 2px;padding:4px 8px;color:#428bca;background:#fff;text-decoration:none;border:1px solid #ddd;border-radius:4px;user-select:none;cursor:pointer}.pagination a:hover,.pagination span:hover{color:#fff;background:#428bca}.pagination .active{color:#fff;background:#428bca;cursor:default;}.pagination input{width:40px;padding:7px 0;border:none;outline:0;border:1px solid #ddd;border-radius:4px;text-align:center;margin:0 5px}.pagination i{font-style: normal;margin:0 5px;color:#999}.pagination input:focus{border:1px solid #428bca}'
+        document.getElementsByTagName('head')[0].appendChild(style)
+    }
+    var page = document.getElementById(data.selector.slice(1)),
+        nextPage = document.getElementById('nextPage'),
+        prevPage = document.getElementById('prevPage'),
+        inputGo = document.getElementById('inputGo'),
+        currentPage = data.currentPage,
+        nowPage = currentPage ? currentPage : 1,
+        visiblePage = Math.ceil(data.visiblePage / 2),
+        i_html = '',
+        pageOneLoad = data.pageOneLoad ? false : true;
+    // 初始化
+    pageAction(nowPage)
+    function pageAction(dataPage) {
+        nowPage = dataPage;
+        i_html = '';
+        var count = data.count <= 1 ? 1 : data.count ? data.count : 2
+        startPage = dataPage - data.count <= 1 ? 1 : dataPage - data.count,
+            endPage = dataPage + data.count >= data.totalPage ? data.totalPage : dataPage + data.count,
+            prevPage = data.prev ? data.prev : '<',
+            nextPage = data.next ? data.next : '>';
+        if (dataPage > 1) {
+            i_html += '<span id=\"prevPage\">' + prevPage + '</span>'
+            if (data.first) {
+                i_html += '<a data-page="1" href=\"javascript:void(0);\">首页</a>'
+            }
+        }
+        if (dataPage >= 5) {
+            for (var i = 1; i <= 2; i++) {
+                i_html += '<a data-page="' + i + '" href=\"javascript:void(0);\">' + i + '</a>'
+            }
+            i_html += '<span>...</span>'
+        }
+        for (var j = startPage; j <= endPage; j++) {
+            i_html += '<a data-page="' + j + '" href=\"javascript:void(0);\">' + j + '</a>'
+        }
+        if (endPage + 1 < data.totalPage) {
+            i_html += '<span>...</span>'
+            for (var i = (endPage > data.totalPage - 2 ? data.totalPage : data.totalPage - 1); i <= data.totalPage; i++) {
+                i_html += '<a data-page="' + i + '" href=\"javascript:void(0);\">' + i + '</a>'
+            }
+            if (data.last) {
+                i_html += '<a data-page="' + data.totalPage + '" href=\"javascript:void(0);\">尾页</a>'
+            }
+            i_html += '<span id=\"nextPage\">' + nextPage + '</span>'
+        }
+        if (data.showTotalPage && data.totalPage >= 1) {
+            i_html += '<i>' + nowPage + '/' + data.totalPage + '</i>'
+        }
+        if (data.jumpBtn && data.totalPage >= 1) {
+            i_html += '前往<input id="pageInput" type="text" />页 <span id="inputGo">确定</span>'
+        }
+        page.innerHTML = i_html;
+        var pageA = page.getElementsByTagName('a');
+        for (var i = 0, pageALength = pageA.length; i < pageALength; i++) {
+            pageA[i].className = ''
+            if (pageA[i].getAttribute('data-page') == dataPage) {
+                pageA[i].className = "active"
+            }
+        }
+        // 第一页不请求
+        if (!pageOneLoad) {
+            callback && callback.call(null, dataPage)
+        }
+    }
+    page.onclick = function (event) {
+        var event = event || window.event,
+            target = event.target || event.srcElement,
+            dataPage = parseInt(target.getAttribute('data-page'));
+        pageOneLoad = false;
+        if (target.className == 'active') return
+        if (target.nodeName.toLowerCase() == 'a') {
+            pageAction(dataPage)
+        }
+        if (target.id == 'nextPage') {
+            nowPage++
+            pageAction(nowPage)
+        }
+        if (target.id == 'prevPage') {
+            nowPage--
+            pageAction(nowPage)
+        }
+        if (target.id == 'inputGo') {
+            var pageInput = document.getElementById('pageInput'),
+                goPage = pageInput.value > data.totalPage ? 1 : /[1-9]+/g.test(pageInput.value) ? pageInput.value : 1;
+            pageAction(parseInt(goPage))
+        }
+    }
+}</code></pre></table></div><h2>3.1、注册部分</h2><div style="margin-left:20px;"><h3>3.1.1、signup.js</h3><div style="margin-left:30px;"><table width='100%' class='codestyle'><pre><code>const router = require('koa-router')();
+引入c-signup.js文件
+const controller = require('../controller/c-signup')
+
+// 注册页面，运用c-signup里面的getSignup方法
+router.get('/signup', controller.getSignup)
+// post 注册 ，运用c-signup里面的postSignup方法
+router.post('/signup', controller.postSignup)
+
+module.exports = router
+//暴露router</code></pre></table></div><h3>3.1.2、signup.ejs</h3><div style="margin-left:30px;"><ul>
+<li>
+<p>开头和结尾都需要引入模板引擎  头：<%- include("header",{type:'signup'}) %> 尾：<% include footer %></p>
+<p><%- include("header",{type:'signup'}) %></p>
+<div class="container">
+        <form class="form create" method="post">
+            <div>
+                <label>用户名：</label> 
+                <input placeholder="请输入用户名" type="text" name="name">
+            </div>
+            <div>
+                <label>密码：</label> 
+                <input placeholder="请输入密码" class="password" type="password" name="password">
+            </div>
+            <div>
+                <label>重复密码：</label> 
+                <input placeholder="请确认密码" class="repeatpass" type="password" name="repeatpass">
+            </div>
+            <div>
+                <label>上传头像：</label>
+                <input type="file" name="avator" id="avator">
+                <input type="hidden" id="avatorVal">
+                <img class="preview" alt="预览头像">
+            </div>
+            <div class="submit">注册</div>
+        </form>
+    </div>
+</li>
+<li>
+<p>注册时需要调用的方法，以及注册账号密码的判断，这里并没有使用原来form的跳转，而是自己另外写的一个方法去实现.</p>
+<table width='100%' class='codestyle'><pre><code><script>
+//当按enter的时候也可以提交表单
+    $(window).keyup(function (e) {
+        if (e.keyCode == 13) {
+            $('.submit').click()
+        }
+    })
+    //上传图片的判断。
+    $('#avator').change(function(){
+        if (this.files.length != 0) {
+            var file = this.files[0],
+                reader = new FileReader();
+            if (!reader) {
+                this.value = '';
+                return;
+            };
+            console.log(file.size,file.type)
+            if (!/image/g.test(file.type)) {
+                fade("请上传图片文件!")
+                $('#avatorVal').val('')
+                $('form .preview').attr('src', '')
+                $('form .preview').fadeOut()
+                return 
+            }
+            reader.onload = function (e) {
+                this.value = '';
+                $('form .preview').attr('src', e.target.result)
+                $('form .preview').fadeIn()
+                 var image = new Image();
+                 image.onload = function(){
+                     var canvas = document.createElement('canvas');
+                     var ctx = canvas.getContext("2d");
+                     canvas.width = 100;
+                     canvas.height = 100;
+                     ctx.clearRect(0, 0, 100, 100);
+                     ctx.drawImage(image, 0, 0, 100, 100);
+                     var blob = canvas.toDataURL("image/png");
+                     $('#avatorVal').val(blob)
+                 }
+                 image.src = e.target.result
+            };
+            reader.readAsDataURL(file);
+        };
+    })
+    //表单提交，使用ajax提交，$('input[name=name]' ==》这样的写法解释为input d的name 属性的等于name的那个input输入框，差不多可以理解为:$('#input1')
+    $('.submit').click(function(){
+        // console.log($('.form').serialize())
+        if ($('input[name=name]').val().trim() == '') {
+            fade('请输入用户名！')
+        }else if($('input[name=name]').val().match(/[<'">]/g)){
+            fade('请输入合法字符！')
+        }else if($('#avatorVal').val() == ''){
+            fade('请上传头像！')
+        }else{
+            $.ajax({
+                url: "/signup",
+                data: {
+                    name: $('input[name=name]').val(),
+                    password: $('input[name=password]').val(),
+                    repeatpass: $('input[name=repeatpass]').val(),
+                    avator: $('#avatorVal').val(),
+                },
+                type: "POST",
+                cache: false,
+                dataType: 'json',
+                success: function (msg) {
+                   if(msg.code == 200){
+                       fade('注册成功')
+                       setTimeout(function(){
+                           window.location.href = "/signin"
+                       },1000)
+
+                   }else{
+                        fade(msg.message)
+                   }
+                },
+                error: function () {
+                    alert('异常');
+                }
+            })
+        }
+    })
+    </script>
+<% include footer %></code></pre></table>
+</li>
+</ul>
+<p>效果图：
+<img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-30/5bb030f2d7c5c.png" alt="" /></p></div><h3>3.1.3、c-signup.js</h3><div style="margin-left:30px;"><ul>
+<li>
+<p>引入依赖</p>
+<table width='100%' class='codestyle'><pre><code>const userModel = require('../lib/mysql.js');
+const md5 = require('md5')
+const checkNotLogin = require('../middlewares/check.js').checkNotLogin
+const checkLogin = require('../middlewares/check.js').checkLogin
+const moment = require('moment');
+const fs = require('fs')</code></pre></table>
+</li>
+<li>
+<p>判断是否已登录</p>
+<table width='100%' class='codestyle'><pre><code>exports.getSignup = async ctx => {
+await checkNotLogin(ctx)
+await ctx.render('signup', {
+//这个便是渲染的session
+    session: ctx.session,
+})
+}</code></pre></table>
+</li>
+<li>
+<p>exports.方法 为暴露出方法，只要引入后便能使用</p>
+<table width='100%' class='codestyle'><pre><code>exports.postSignup = async ctx => {
+let { name, password, repeatpass, avator } = ctx.request.body
+console.log(typeof password)
+await userModel.findDataCountByName(name)
+    .then(async (result) => {
+        if (result[0].count >= 1) {
+            // 用户存在
+            ctx.body = {
+                code: 500,
+                message: '用户存在'
+            };
+        } else if (password !== repeatpass || password.trim() === '') {
+            ctx.body = {
+                code: 500,
+                message: '两次输入的密码不一致'
+            };
+        } else if(avator && avator.trim() === ''){
+            ctx.body = {
+                code: 500,
+                message: '请上传头像'
+            };
+        } else {
+        //存储头像,运用node原生的fs方法
+            let base64Data = avator.replace(/^data:image\/\w+;base64,/, ""),
+                dataBuffer = new Buffer(base64Data, 'base64'),
+                getName = Number(Math.random().toString().substr(3)).toString(36) + Date.now(),
+                upload = await new Promise((reslove, reject) => {
+                    fs.writeFile('./public/images/' + getName + '.png', dataBuffer, err => {
+                        if (err) {
+                            throw err;
+                            reject(false)
+                        };
+                        reslove(true)
+                        console.log('头像上传成功')
+                    });
+                });
+            // console.log('upload', upload)
+            if (upload) {
+                await userModel.insertData([name, md5(password), getName + '.png', moment().format('YYYY-MM-DD HH:mm:ss')])
+                    .then(res => {
+                        console.log('注册成功', res)
+                        //注册成功
+                        ctx.body = {
+                            code: 200,
+                            message: '注册成功'
+                        };
+                    })
+            } else {
+                console.log('头像上传失败')
+                ctx.body = {
+                    code: 500,
+                    message: '头像上传失败'
+                }
+            }
+        }
+    })
+}</code></pre></table>
+</li>
+<li>md5实现密码加密，长度是32位的</li>
+<li>bodyParse来解析提交的数据，通过ctx.request.body得到</li>
+<li>数据库的操作 findDataByName和insertData，在/lib/mysql.js中已经把他们写好，并暴露出来了。意思是先从数据库里面查找注册的用户名，如果找到了证明该用户名已经被注册过了，如果没有找到则使用insertData增加到数据库中</li>
+<li>ctx.body 是我们通过ajax提交之后给页面返回的数据，比如提交ajax成功之后msg.data=1的时候就代表用户存在，msg.data出现在后面的signup.ejs模板ajax请求中</li>
+<li>上传头像之前要新建好文件夹，我们ajax发送的是base64的格式，然后使用fs.writeFile来生成图片</li>
+</ul>
+<h4>我们使用ajax来提交数据，方便来做成功错误的处理</h4></div></div><h2>3.2、模板引擎</h2><div style="margin-left:20px;"><h3>3.2.1、header.ejs</h3><div style="margin-left:30px;"><table width='100%' class='codestyle'><pre><code><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>koa2-blog</title></code></pre></table>
+<ul>
+<li>
+<p>浏览器标题的缩略图</p>
+<table width='100%' class='codestyle'><pre><code><link rel="icon" href="http://www.wclimb.site/images/avatar.png"></code></pre></table>
+</li>
+<li>
+<p>引入css样式，以及jquery</p>
+<table width='100%' class='codestyle'><pre><code><link rel="stylesheet" href="/index.css">
+<script src="http://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script></code></pre></table>
+</li>
+<li>
+<p>页头获取用户信息，以及控制css样式。以及登出的操作方法</p>
+<table width='100%' class='codestyle'><pre><code><script>
+    function fade(txt){
+        $('.message').text(txt)
+        $('.message').animate({
+            top:0
+        })
+        setTimeout(function(){
+            $('.message').animate({
+                top: '-100%'
+            })
+        },1500)
+    }
+    $(function(){
+        $('.signout').click(function(){
+            $.ajax({
+                url: "/signout",
+                type: "GET",
+                cache: false,
+                dataType: 'json',
+                success: function (msg) {
+                    if (msg) {
+                        fade('登出成功')
+                        setTimeout(function(){
+                            location.href = "/posts"
+                        },1500)
+                    }
+                },
+                error: function () {
+                    alert('异常');
+                }
+            })
+        })
+    })
+</script>
+</head></code></pre></table>
+</li>
+<li>
+<p>ejs获取渲染部门的信息,node 通过view渲染了session（用户的个人信息）,并做了判断，判断是否已登录，对应显示不一样的内容</p>
+<table width='100%' class='codestyle'><pre><code><body>
+<header>
+    <div class="user_name">
+        <% if(session.user){ %>
+             Hello,<%= session.user %>
+        <% } %>
+        <% if(!session.user){ %>
+            欢迎注册登录^_^
+        <% } %>
+    </div>
+    <div class="message">登录成功</div>
+    <div class="user_right">
+        <%  if(session.user){ %>
+            <div class="has_user">
+                <a target="__blank" href="https://github.com/wclimb/Koa2-blog">GitHub</a>
+                <% if(type == 'all'){ %>
+                    <a class="active" href="/posts">全部文章</a>
+                <% }else{ %>
+                    <a href="/posts">全部文章</a>
+                <% }%>
+                <% if(type == 'my'){ %>
+                    <a class="active" href="/posts?author=<%= session.user %>">我的文章</a>
+                <% }else{ %>
+                    <a href="/posts?author=<%= session.user %>">我的文章</a>
+                <% }%>
+                <% if(type == 'create'){ %>
+                    <a class="active" href="/create">发表文章</a>
+                <% }else{ %>
+                    <a href="/create">发表文章</a>
+                <% }%>
+
+                <span class="signout">登出</span>
+            </div>
+        <% } %>
+        <% if(!session.user){ %>
+            <div class="none_user has_user">
+                <a target="__blank" href="https://github.com/wclimb/Koa2-blog">GitHub</a>
+                <% if(type == 'all'){ %>
+                    <a class="active" href="/posts">全部文章</a>
+                <% }else{ %>
+                    <a href="/posts">全部文章</a>
+                <% }%>
+                <% if(type == 'signup'){ %>
+                    <a class="active" href="/signup">注册</a>
+                <% }else{ %>
+                    <a href="/signup">注册</a>
+                <% }%>
+                <% if(type == 'signin'){ %>
+                    <a class="active" href="/signin">登录</a>
+                <% }else{ %>
+                    <a href="/signin">登录</a>
+                <% }%>
+            </div>
+        <% } %>
+    </div>
+</header></code></pre></table>
+</li>
+</ul>
+<p>未登录时：
+<img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-30/5bb0313635b50.png" alt="" />
+已登录：
+<img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-30/5bb0314fee4e4.png" alt="" /></p></div><h3>3.2.2、footer.ejs</h3><div style="margin-left:30px;"><ul>
+<li>
+<p>标签的补充</p>
+<table width='100%' class='codestyle'><pre><code>    </body>
+</html></code></pre></table>
+</li>
+<li>在这里添加ejs模板的补充</li>
+</ul>
+<p>我们用到了ejs所需的session 我们通过渲染signup.ejs模板，将值ctx.session赋值给session，之后我们就可以在signup.ejs中使用了 。
+ejs的常用标签为：</p>
+<ol>
+<li><% code %>：运行 JavaScript 代码，不输出</li>
+<li><%= code %>：显示转义后的 HTML内容</li>
+<li><%- code %>：显示原始 HTML 内容</li>
+</ol>
+<p><code><%= code %></code>和<code><%- code %></code>的区别在于，<code><%= code %></code>不管你写什么都会原样输出，比如code为 <code><strong>hello</strong></code>的时候 <code><%= code %></code> 会显示<code><strong>hello</strong></code>
+而<code><%- code %></code>则显示<code>加粗</code>的hello</p></div></div><h2>3.3、登录部分</h2><div style="margin-left:20px;"><h3>3.3.1、signin.js</h3><div style="margin-left:30px;"><table width='100%' class='codestyle'><pre><code>const router = require('koa-router')();
+const controller = require('../controller/c-signin')
+
+router.get('/signin', controller.getSignin)
+router.post('/signin', controller.postSignin)
+
+module.exports = router</code></pre></table>
+<p>效果图：
+<img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-30/5bb031bac2c00.png" alt="" /></p></div><h3>3.3.2、signin.ejs</h3><div style="margin-left:30px;"><ul>
+<li>
+<p>主内容:</p>
+<p><%- include("header",{type:'signin'}) %></p>
+<div class="container">
+        <form class="form create" method="post ">
+            <div>
+                <label>用户名：</label> 
+                <input placeholder="用户名" type="text" name="name">
+            </div>
+            <div>
+                <label>密码：</label> 
+                <input placeholder="密码" type="password" name="password">
+            </div>
+            <div class="submit">登录</div>
+        </form>
+    </div>
+</li>
+<li>
+<p>js代码,跟注册的代码差不多:</p>
+<table width='100%' class='codestyle'><pre><code><script>
+    $(window).keyup(function(e){
+        //console.log(e.keyCode)
+        if (e.keyCode == 13) {
+            $('.submit').click()
+        }
+    })
+    $('.submit').click(function(){
+        if ($('input[name=name]').val().trim() == '' || $('input[name=password]').val().trim() == '' ) {
+            fade('请输入用户名或密码')
+        }else{
+            console.log($('.form').serialize())
+            $.ajax({
+                url: "/signin",
+                data: $('.form').serialize(),
+                type: "POST",
+                cache: false,
+                dataType: 'json',
+                success: function (msg) {
+                    if (msg.code != 200) {
+                        $('input').val('')
+                        fade('用户名或密码错误')
+                    } else{
+                        fade('登录成功')
+                        setTimeout(function(){
+                            window.location.href = "/posts"
+                        },1500)
+                    }
+                },
+                error: function () {
+                    alert('异常');
+                }
+            })
+        }
+    })
+</script>
+<% include footer %></code></pre></table>
+</li>
+</ul></div><h3>3.3.3、c-signin.js</h3><div style="margin-left:30px;"><ul>
+<li>
+<p>引入依赖</p>
+<p>const userModel = require('../lib/mysql.js')
+const md5 = require('md5')
+const checkNotLogin = require('../middlewares/check.js').checkNotLogin
+const checkLogin = require('../middlewares/check.js').checkLogin</p>
+</li>
+<li>
+<p>判断是否登录</p>
+<p>exports.getSignin = async ctx => {
+await checkNotLogin(ctx)
+await ctx.render('signin', {
+session: ctx.session,
+})
+}</p>
+</li>
+<li>
+<p>postSignin 方法 ,通过userModel.findDataByName(name)查找是否已经存在该用户，备注一下code是为了判断操作是否成功，200表示ok，500表示失败</p>
+<p>exports.postSignin = async ctx => {
+console.log(ctx.request.body)
+let { name, password } = ctx.request.body
+await userModel.findDataByName(name)
+.then(result => {
+let res = result
+if (res.length && name === res[0]['name'] && md5(password) === res[0]['pass']) {
+ctx.session = {
+user: res[0]['name'],
+id: res[0]['id']
+}
+ctx.body = {
+code: 200,
+message: '登录成功'
+}
+console.log('ctx.session.id', ctx.session.id)
+console.log('session', ctx.session)
+console.log('登录成功')
+} else {
+ctx.body = {
+code: 500,
+message: '用户名或密码错误'
+}
+console.log('用户名或密码错误!')
+}
+}).catch(err => {
+console.log(err)
+})
+}</p>
+</li>
+</ul></div></div><h2>3.4、文章部分</h2><div style="margin-left:20px;"><h3>3.4.1、posts.ejs</h3><div style="margin-left:30px;"><table width='100%' class='codestyle'><pre><code><%- include("header",{type:'all'}) %>
+    <div class="container">
+    <% if(posts.length > 0 ){  %>
+        <ul class="posts">
+        //posts.forEach() 循环输出，获取已渲染的数据
+            <% posts.forEach(function(res){ %>
+                <li>
+                    <div class="author">
+                        <span title="<%= res.name %>"><a href="/posts?author=<%= res.name %> ">author: <%= res.name %></a></span>
+                        <span>评论数：<%= res.comments %></span>
+                        <span>浏览量：<%= res.pv %></span>
+                    </div>
+                    <div class="comment_pv">
+                        <span><%= res.moment %></span>
+                    </div>
+                    <a href="/posts/<%= res.id %>">
+                        <div class="title">
+                            <img class="userAvator" src="images/<%= res.avator %>"  alt="avator">
+                            <%- res.title %>
+                        </div>
+                        <div class="content markdown">
+                            <%- res.content %>
+                        </div>
+                    </a>
+                </li>
+            <% }) %>
+        </ul>
+    <% }else{  %>
+        <p class="tips">暂时没有文章，快去前往发表吧</p>
+    <% } %>
+        <div style="margin-top: 30px" class="pagination" id="page"></div>   
+    </div>
+    <script src="/pagination.js"></script>
+    <script>
+        pagination({
+            selector: '#page',
+            totalPage: <%= postsPageLength %>,
+            currentPage: 1,
+            prev: '上一页',
+            next: '下一页',
+            first: true,
+            last: true,
+            showTotalPage: true,
+            count: 2//当前页前后显示的数量
+        },function(val){
+            // 当前页
+            $.ajax({
+                url: "posts/page",
+                type: 'POST',
+                data:{
+                    page: val
+                },
+                cache: false,
+                success: function (msg) {
+                    console.log(msg)
+                    if (msg != 'error') {
+                        $('.posts').html(' ')
+                        $.each(msg,function(i,val){
+                            //console.log(val.content)
+                            $('.posts').append(
+                                '<li>'+
+                                    '<div class=\"author\">'+
+                                        '<span title=\"'+ val.name +'\"><a href=\"/posts?author='+ val.name +' \">author: '+ val.name +'</a></span>'+
+                                        '<span>评论数：'+ val.comments +'</span>'+
+                                        '<span>浏览量：'+ val.pv +'</span>'+
+                                    '</div>'+
+                                    '<div class=\"comment_pv\">'+
+                                        '<span>'+ val.moment +'</span>'+
+                                    '</div>'+
+                                    '<a href=\"/posts/'+ val.id +'\">'+
+                                        '<div class=\"title\">'+
+                                            '<img class="userAvator" src="images/'+ val.avator +'" alt=\"avator\">'+
+                                             val.title +
+                                        '</div>'+
+                                        '<div class=\"content markdown\">'+
+                                             val.content +
+                                        '</div>'+
+                                    '</a>'+
+                                '</li>'
+                            )
+                        })
+                    }else{
+                        alert('分页不存在')
+                    } 
+                }
+            })
+
+        })
+    </script>
+<% include footer %></code></pre></table></div><h3>3.4.2、create.ejs</h3><div style="margin-left:30px;"><p>发表文章页面：</p>
+<table width='100%' class='codestyle'><pre><code><%- include("header",{type:'create'}) %>
+<div class="container">
+    <form style="width:100%" method="post" class="form create">
+        <div>
+            <label>标题：</label>
+            <input placeholder="请输入标题" type="text" name="title">
+        </div>
+        <div>
+            <label>内容：</label>
+            <textarea placeholder="请输入内容" name="content" id="" cols="42" rows="10"></textarea>
+        </div>
+        <div class="submit">发表</div>
+    </form>
+</div>
+<script>
+    $('.submit').click(function(){
+        if ($('input[name=title]').val().trim() == '') {
+            fade('请输入标题')
+        }else if ($('textarea').val().trim() == '') {
+            fade('请输入内容')
+        }else{          
+            $.ajax({
+                url: "/create",
+                data: $('.form').serialize(),
+                type: "POST",
+                cache: false,
+                dataType: 'json',
+                success: function (msg) {
+                    if (msg.code == 200) {
+                        fade('发表成功')
+                        setTimeout(function(){
+                            location.href = "/posts"
+                        },1000)
+                    }else{
+                        fade('发表失败')
+                    }
+                },
+                error: function () {
+                    alert('异常');
+                }
+            })
+        }
+    })
+</script>
+<% include footer %></code></pre></table></div><h3>3.4.3、sPost.ejs</h3><div style="margin-left:30px;"><p>首页的所有文章数据：</p>
+<table width='100%' class='codestyle'><pre><code><%- include("header",{type:''}) %></code></pre></table>
+<p>这是首页的文章发布部分，里面含有所有的文章:</p>
+<table width='100%' class='codestyle'><pre><code>    <div class="container">
+        <ul class="posts spost">
+            <li>
+                <div class="author">
+                    <span title="<%= posts.name %>"><a href="/posts?author=<%= posts.name %> ">author: <%= posts.name %></a></span>
+                    <span>评论数：<%= posts.comments %></span>
+                    <span>浏览量：<%= posts.pv %></span>
+                </div>
+                <div class="comment_pv">
+                    <span><%= posts.moment %></span>
+                </div>
+                <a href="/posts/<%= posts.id %>">
+                    <div class="title">
+                        <img class="userAvator" src="../images/<%= posts.avator %>" alt="avator">
+                        <%- posts.title %>
+                    </div>
+                    <div class="content markdown">
+                        <%- posts.content %>
+                    </div>
+                </a>
+                <div class="edit">
+                    <% if(session && session.user ===  posts.name  ){ %>
+                    <p><a href="<%= posts['id'] %>/edit">编辑</a></p>
+                    <p><a class="delete_post">删除</a></p>
+                    <% } %>
+                </div>
+            </li>
+        </ul>
+    </div></code></pre></table>
+<p>点击之后显示评论内容：</p>
+<table width='100%' class='codestyle'><pre><code>    <div class="comment_wrap">
+        <% if(session.user){ %>
+        <form class="form" method="post" action="/<%= posts.id %>">
+            <textarea id="spContent" name="content" cols="82"></textarea>
+            <div class="submit">发表留言</div>
+        </form>
+        <% } else{ %>
+            <p class="tips">登录之后才可以评论哟</p>
+        <% } %>
+        <% if (commentPageLength > 0) { %>
+        <div class="comment_list markdown">
+            <% pageOne.forEach(function(res){ %>
+                <div class="cmt_lists">
+                    <div class="cmt_content">
+                        <div class="userMsg">
+                            <img src="../images/<%= res['avator'] %>" alt="avator"><span><%= res['name'] %></span>
+                        </div>
+                        <div class="cmt_detail">
+                            <%- res['content'] %>
+                        </div>
+                        <span class="cmt_time"><%= res['moment'] %></span>
+                        <span class="cmt_name">
+                            <% if(session && session.user ===  res['name']){ %>
+                                <a class="delete_comment" href="javascript:delete_comment(<%= res['id'] %>);"> 删除</a>
+                            <% } %>
+                        </span>
+                    </div>
+                </div>
+            <% }) %>
+        </div>  
+        <% } else{ %>
+            <p class="tips">还没有评论，赶快去评论吧！</p>
+        <% } %>
+        <div style="margin-top: 30px" class="pagination" id="page"></div>   
+    </div>
+    <script src="/pagination.js"></script></code></pre></table>
+<p>分页以及评论的等等操作：</p>
+<table width='100%' class='codestyle'><pre><code>    <script>
+        var userName = "<%- session.user %>"
+        pagination({
+            selector: '#page',
+            totalPage: <%= commentPageLength %>,
+            currentPage: 1,
+            prev: '上一页',
+            next: '下一页',
+            first: true,
+            last: true,
+            showTotalPage:true,
+            count: 2//当前页前面显示的数量
+        },function(val){
+            // 当前页
+            var _comment = ''
+            $.ajax({
+                url: "<%= posts.id %>/commentPage",
+                type: 'POST',
+                data:{
+                    page: val
+                },
+                cache: false,
+                success: function (msg) {
+                    //console.log(msg)
+                    _comment = ''
+                    if (msg != 'error') {
+                        $('.comment_list').html(' ')
+                        $.each(msg,function(i,val){
+                            //console.log(val.content)
+                            _comment += '<div class=\"cmt_lists\"><div class=\"cmt_content\"><div class=\"userMsg\"><img src = \"../images/'+ val.avator +'\" alt=\"avator\"><span>'+ val.name +'</span></div ><div class="cmt_detail">'+ val.content + '</div><span class=\"cmt_time\">'+ val.moment +'</span><span class=\"cmt_name\">';
+                                if (val.name == userName) {
+                                    _comment += '<a class=\"delete_comment\" href=\"javascript:delete_comment('+ val.id +');\"> 删除</a>'
+                                }
+                            _comment += '</span></div></div>'
+                        })
+                        $('.comment_list').append(_comment)
+                    }else{
+                        alert('分页不存在')
+                    } 
+                }
+            })
+
+        })
+
+        // 删除文章
+        $('.delete_post').click(function() {
+            $.ajax({
+                url: "<%= posts.id %>/remove",
+                type: 'POST',
+                cache: false,
+                success: function (msg) {
+                    if (msg.code == 200) {
+                        fade('删除文章成功')
+                        setTimeout(function() {
+                            window.location.href = "/posts"
+                        }, 1000)
+                    } else {
+                        fade('删除文章失败')
+                    }
+                }
+            })
+        })
+        // 评论
+        var isAllow = true
+        $('.submit').click(function(){
+            if (!isAllow) return
+            isAllow = false
+            if ($('textarea').val().trim() == '') {
+                fade('请输入评论！')
+                isAllow = true
+            }else{
+                $.ajax({
+                    url: '/' + location.pathname.split('/')[2],
+                    data:$('.form').serialize(),
+                    type: "POST",
+                    cache: false,
+                    dataType: 'json',
+                    success: function (msg) {
+                        if (msg.code == 200) {
+                            fade('发表留言成功')
+                            setTimeout(()=>{
+                                isAllow = true
+                                window.location.reload()
+                            },1500)
+                        }
+                    },
+                    error: function () {
+                        alert('异常');
+                    }
+                })
+            }
+        })
+        // 删除评论
+        function delete_comment(id) {
+            $.ajax({
+                url: "<%= posts.id %>/comment/" + id + "/remove",
+                type: 'POST',
+                cache: false,
+                success: function (msg) {
+                    if (msg.code == 200) {
+                        fade('删除留言成功')
+                        setTimeout(function() {
+                            location.reload()
+                        }, 1000)
+                    } else {
+                        fade('删除留言失败');
+                    } 
+                },
+                error: function () {
+                    alert('异常')
+                }
+            })
+        }
+    </script>
+<% include footer %></code></pre></table>
+<p><img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-10-08/5bbb0e5d55f65.png" alt="" /></p></div><h3>3.4.4、selfPosts.ejs</h3><div style="margin-left:30px;"><p>显示自己的已发布的文章:</p>
+<table width='100%' class='codestyle'><pre><code><%- include("header",{type:'my'}) %>
+    <div class="container">
+        <ul class="posts">
+            <% posts.forEach(function(res){ %>
+                <li>
+                    <div class="author">
+                        <span title="<%= res.name %>"><a href="/posts?author=<%= res.name %> ">author: <%= res.name %></a></span>
+                        <span>评论数：<%= res.comments %></span>
+                        <span>浏览量：<%= res.pv %></span>
+                    </div>
+                    <div class="comment_pv">
+                        <span><%= res.moment %></span>
+                    </div>
+                    <a href="/posts/<%= res.id %>">
+                        <div class="title">
+                            <img class="userAvator" src="images/<%= res.avator %>"  alt="avator"> 
+                            <%- res.title %>
+                        </div>
+                        <div class="content markdown">
+                            <%- res.content %>
+                        </div>
+                    </a>
+                </li>
+            <% }) %>
+        </ul>
+        <div style="margin-top: 30px" class="pagination" id="page"></div>   
+    </div>
+    <script src="/pagination.js"></script>
+    <script>
+        pagination({
+            selector: '#page',
+            totalPage: <%= postsPageLength %>,
+            currentPage: 1,
+            prev: '上一页',
+            next: '下一页',
+            first: true,
+            last: true,
+            showTotalPage: true,
+            count: 2//当前页前后显示的数量
+        },function(val){
+            // 当前页
+            $.ajax({
+                url: "posts/self/page",
+                type: 'POST',
+                data:{
+                    page: val,
+                    name: location.search.slice(1).split('=')[1]
+                },
+                cache: false,
+                success: function (msg) {
+                    //console.log(msg)
+                    if (msg != 'error') {
+                        $('.posts').html(' ')
+                        $.each(msg,function(i,val){
+                            //console.log(val.content)
+                            $('.posts').append(
+                                '<li>'+
+                                    '<div class=\"author\">'+
+                                        '<span title=\"'+ val.name +'\"><a href=\"/posts?author='+ val.name +' \">author: '+ val.name +'</a></span>'+
+                                        '<span>评论数：'+ val.comments +'</span>'+
+                                        '<span>浏览量：'+ val.pv +'</span>'+
+                                    '</div>'+
+                                    '<div class=\"comment_pv\">'+
+                                        '<span>'+ val.moment +'</span>'+
+                                    '</div>'+
+                                    '<a href=\"/posts/'+ val.id +'\">'+
+                                        '<div class=\"title\">'+
+                                            '<img class="userAvator" src="images/' + val.avator + '" alt=\"avator\">' +
+                                             val.title +
+                                        '</div>'+
+                                        '<div class=\"content\">'+
+                                             val.content +
+                                        '</div>'+
+                                    '</a>'+
+                                '</li>'
+                            )
+                        })
+                    }else{
+                        alert('分页不存在')
+                    } 
+                }
+            })
+
+        })
+    </script>
+<% include footer %></code></pre></table></div><h3>3.4.5、edit.ejs</h3><div style="margin-left:30px;"><p>修改的界面：</p>
+<table width='100%' class='codestyle'><pre><code><%- include("header",{type:''}) %>
+<div class="container">
+    <form style="width:100%" class="form create" method="post">
+        <div>
+            <label>标题：</label>
+            <input placeholder="标题" type="text" name="title" value="<%- postsTitle %>">
+        </div>
+        <div>
+            <label>内容：
+
+            </label>
+            <textarea name="content" id="" cols="42" rows="10"><%= postsContent %></textarea>
+        </div>
+        <div class="submit">修改</div>
+    </form>
+</div>
+<script>
+    $('.submit').click(function () {
+        $.ajax({
+            url: '',
+            data: $('.form').serialize(),
+            type: "POST",
+            cache: false,
+            dataType: 'json',
+            success: function (msg) {
+                if (msg.code != 200) {
+                    fade('修改失败')
+                } else if (msg) {
+                    fade('修改成功')
+                    setTimeout(function () {
+                        window.location.href = "/posts"
+                    }, 1000)
+                }
+            },
+            error: function () {
+                alert('服务器异常');
+            }
+        })
+    })
+</script>
+<% include footer %></code></pre></table></div><h3>3.4.6、posts.js</h3><div style="margin-left:30px;"><table width='100%' class='codestyle'><pre><code>const router = require('koa-router')();
+const controller = require('../controller/c-posts')
+
+// 重置到文章页
+router.get('/', controller.getRedirectPosts)
+// 文章页
+router.get('/posts', controller.getPosts)
+// 首页分页，每次输出10条
+router.post('/posts/page', controller.postPostsPage)
+// 个人文章分页，每次输出10条
+router.post('/posts/self/page', controller.postSelfPage)
+// 单篇文章页
+router.get('/posts/:postId', controller.getSinglePosts)
+// 发表文章页面
+router.get('/create', controller.getCreate)
+// post 发表文章
+router.post('/create', controller.postCreate)
+// 发表评论
+router.post('/:postId',controller.postComment)
+// 编辑单篇文章页面
+router.get('/posts/:postId/edit', controller.getEditPage)
+// post 编辑单篇文章
+router.post('/posts/:postId/edit', controller.postEditPage)
+// 删除单篇文章
+router.post('/posts/:postId/remove', controller.postDeletePost)
+// 删除评论
+router.post('/posts/:postId/comment/:commentId/remove', controller.postDeleteComment)
+// 评论分页
+router.post('/posts/:postId/commentPage', controller.postCommentPage)
+
+module.exports = router</code></pre></table></div><h3>3.4.7、c-posts.js</h3><div style="margin-left:30px;"><table width='100%' class='codestyle'><pre><code>const userModel = require('../lib/mysql.js')
+const moment = require('moment')
+const checkNotLogin = require('../middlewares/check.js').checkNotLogin
+const checkLogin = require('../middlewares/check.js').checkLogin;
+const md = require('markdown-it')();
+/**
+ * 重置到文章页
+ */
+exports.getRedirectPosts = async ctx => {
+    ctx.redirect('/posts')
+}
+/**
+ * 文章页
+ */
+exports.getPosts = async ctx => {
+    let res,
+        postCount,
+        name = decodeURIComponent(ctx.request.querystring.split('=')[1]);
+    if (ctx.request.querystring) {
+        await userModel.findPostCountByName(name)
+            .then(result => {
+                postCount = result[0].count
+            })
+        await userModel.findPostByUserPage(name, 1)
+            .then(result => {
+                res = result
+            })
+        await ctx.render('selfPosts', {
+            session: ctx.session,
+            posts: res,
+            postsPageLength: Math.ceil(postCount / 10),
+        })
+    } else {
+        await userModel.findPostByPage(1)
+            .then(result => {
+                res = result
+            })
+        await userModel.findAllPostCount()
+            .then(result => {
+                postCount = result[0].count
+            })
+        await ctx.render('posts', {
+            session: ctx.session,
+            posts: res,
+            postsLength: postCount,
+            postsPageLength: Math.ceil(postCount / 10),
+
+        })
+    }
+}
+/**
+ * 首页分页， 每次输出10条
+ */
+exports.postPostsPage = async ctx => {
+    let page = ctx.request.body.page;
+    await userModel.findPostByPage(page)
+        .then(result => {
+            ctx.body = result
+        }).catch(() => {
+            ctx.body = 'error'
+        })
+}
+/**
+ * 个人文章分页， 每次输出10条
+ */
+exports.postSelfPage = async ctx => {
+    let data = ctx.request.body
+    await userModel.findPostByUserPage(decodeURIComponent(data.name), data.page)
+        .then(result => {
+            ctx.body = result
+        }).catch(() => {
+            ctx.body = 'error'
+        })
+}
+/**
+ * 单篇文章页
+ */
+exports.getSinglePosts = async ctx => {
+    let postId = ctx.params.postId,
+        count,
+        res,
+        pageOne;
+    await userModel.findDataById(postId)
+        .then(result => {
+            res = result
+        })
+    await userModel.updatePostPv(postId)
+    await userModel.findCommentByPage(1, postId)
+        .then(result => {
+            pageOne = result
+        })
+    await userModel.findCommentCountById(postId)
+        .then(result => {
+            count = result[0].count
+        })
+    await ctx.render('sPost', {
+        session: ctx.session,
+        posts: res[0],
+        commentLength: count,
+        commentPageLength: Math.ceil(count / 10),
+        pageOne: pageOne
+    })
+
+}
+/**
+ * 发表文章页面
+ */
+exports.getCreate = async ctx => {
+    await checkLogin(ctx)
+    await ctx.render('create', {
+        session: ctx.session,
+    })
+}
+/**
+ * 发表文章
+ */
+exports.postCreate = async ctx => {
+    let {
+        title,
+        content
+    } = ctx.request.body,
+        id = ctx.session.id,
+        name = ctx.session.user,
+        time = moment().format('YYYY-MM-DD HH:mm:ss'),
+        avator,
+        // 现在使用markdown不需要单独转义
+        newContent = content.replace(/[<">']/g, (target) => {
+            return {
+                '<': '&lt;',
+                '"': '&quot;',
+                '>': '&gt;',
+                "'": '&#39;'
+            } [target]
+        }),
+        newTitle = title.replace(/[<">']/g, (target) => {
+            return {
+                '<': '&lt;',
+                '"': '&quot;',
+                '>': '&gt;',
+                "'": '&#39;'
+            } [target]
+        });
+
+    await userModel.findUserData(ctx.session.user)
+        .then(res => {
+            avator = res[0]['avator']
+        })
+    await userModel.insertPost([name, newTitle, md.render(content), content, id, time, avator])
+        .then(() => {
+            ctx.body = {
+                code: 200,
+                message: '发表文章成功'
+            }
+        }).catch(() => {
+            ctx.body = {
+                code: 500,
+                message: '发表文章失败'
+            }
+        })
+}
+/**
+ * 发表评论
+ */
+exports.postComment = async ctx => {
+    let name = ctx.session.user,
+        content = ctx.request.body.content,
+        postId = ctx.params.postId,
+        time = moment().format('YYYY-MM-DD HH:mm:ss'),
+        avator;
+    await userModel.findUserData(ctx.session.user)
+        .then(res => {
+            avator = res[0]['avator']
+        })
+    await userModel.insertComment([name, md.render(content), time, postId, avator])
+    await userModel.addPostCommentCount(postId)
+        .then(() => {
+            ctx.body = {
+                code: 200,
+                message: '评论成功'
+            }
+        }).catch(() => {
+            ctx.body = {
+                code: 500,
+                message: '评论失败'
+            }
+        })
+}
+/**
+ * 编辑单篇文章页面
+ */
+exports.getEditPage = async ctx => {
+    let name = ctx.session.user,
+        postId = ctx.params.postId,
+        res;
+    await checkLogin(ctx)
+    await userModel.findDataById(postId)
+        .then(result => {
+            res = result[0]
+        })
+    await ctx.render('edit', {
+        session: ctx.session,
+        postsContent: res.md,
+        postsTitle: res.title
+    })
+
+}
+/**
+ * post 编辑单篇文章
+ */
+exports.postEditPage = async ctx => {
+    let title = ctx.request.body.title,
+        content = ctx.request.body.content,
+        id = ctx.session.id,
+        postId = ctx.params.postId,
+        allowEdit = true,
+        // 现在使用markdown不需要单独转义
+        newTitle = title.replace(/[<">']/g, (target) => {
+            return {
+                '<': '&lt;',
+                '"': '&quot;',
+                '>': '&gt;',
+                "'": '&#39;'
+            } [target]
+        }),
+        newContent = content.replace(/[<">']/g, (target) => {
+            return {
+                '<': '&lt;',
+                '"': '&quot;',
+                '>': '&gt;',
+                "'": '&#39;'
+            } [target]
+        });
+    await userModel.findDataById(postId)
+        .then(res => {
+            if (res[0].name != ctx.session.user) {
+                allowEdit = false
+            } else {
+                allowEdit = true
+            }
+        })
+    if (allowEdit) {
+        await userModel.updatePost([newTitle, md.render(content), content, postId])
+            .then(() => {
+                ctx.body = {
+                    code: 200,
+                    message: '编辑成功'
+                }
+            }).catch(() => {
+                ctx.body = {
+                    code: 500,
+                    message: '编辑失败'
+                }
+            })
+    } else {
+        ctx.body = {
+            code: 404,
+            message: '无权限'
+        }
+    }
+}
+/**
+ * 删除单篇文章
+ */
+exports.postDeletePost = async ctx => {
+    let postId = ctx.params.postId,
+        allow;
+    await userModel.findDataById(postId)
+        .then(res => {
+            if (res[0].name != ctx.session.user) {
+                allow = false
+            } else {
+                allow = true
+            }
+        })
+    if (allow) {
+        await userModel.deleteAllPostComment(postId)
+        await userModel.deletePost(postId)
+            .then(() => {
+                ctx.body = {
+                    code: 200,
+                    message: '删除文章成功'
+                }
+            }).catch(() => {
+                ctx.body = {
+                    code: 500,
+                    message: '删除文章失败'
+                }
+            })
+    } else {
+        ctx.body = {
+            code: 404,
+            message: '无权限'
+        }
+    }
+}
+/**
+ * 删除评论
+ */
+exports.postDeleteComment = async ctx => {
+    let postId = ctx.params.postId,
+        commentId = ctx.params.commentId,
+        allow;
+    await userModel.findComment(commentId)
+        .then(res => {
+            if (res[0].name != ctx.session.user) {
+                allow = false
+            } else {
+                allow = true
+            }
+        })
+    if (allow) {
+        await userModel.reducePostCommentCount(postId)
+        await userModel.deleteComment(commentId)
+            .then(() => {
+                ctx.body = {
+                    code: 200,
+                    message: '删除评论成功'
+                }
+            }).catch(() => {
+                ctx.body = {
+                    code: 500,
+                    message: '删除评论失败'
+                }
+
+            })
+    } else {
+        ctx.body = {
+            code: 404,
+            message: '无权限'
+        }
+    }
+}
+/**
+ * 评论分页
+ */
+exports.postCommentPage = async function (ctx) {
+    let postId = ctx.params.postId,
+        page = ctx.request.body.page;
+    await userModel.findCommentByPage(page, postId)
+        .then(res => {
+            ctx.body = res
+        }).catch(() => {
+            ctx.body = 'error'
+        })
+}</code></pre></table></div></div></div></body></html>

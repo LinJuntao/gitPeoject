@@ -1,0 +1,224 @@
+
+        <html xmlns:v="urn:schemas-microsoft-com:vml"
+        xmlns:o="urn:schemas-microsoft-com:office:office"
+        xmlns:w="urn:schemas-microsoft-com:office:word"
+        xmlns="http://www.w3.org/TR/REC-html40">
+        <head><meta http-equiv=Content-Type content="text/html;  
+        charset=utf-8">
+        <style type="text/css">
+            table  
+            {  
+                border-collapse: collapse;
+                border: none;  
+                width: 100%;  
+            }  
+            td  
+            {  
+                border: solid #CCC 1px;  
+            }  
+            .codestyle{
+                word-break: break-all;
+                background:silver;mso-highlight:silver;
+            }
+        </style>
+        <meta name=ProgId content=Word.Document>
+        <meta name=Generator content="Microsoft Word 11">
+        <meta name=Originator content="Microsoft Word 11">
+        <xml><w:WordDocument><w:View>Print</w:View></xml></head>
+        <body><h1>1、Koa2介绍</h1><div style="margin-left:20px;"><h4>Koa2是现在最流行的基于Node.js平台的web开发框架，它很小，但扩展性很强。</h4>
+<h6>Koa给人一种干净利落的感觉，体积小、编程方式干净。国内很多知名互联网公司都在使用，BAT（百度、阿里、腾讯）全部都在使用。</h6>
+<hr>
+<table width='100%' class='codestyle'><pre><code>使用 koa 编写 web 应用，通过组合不同的 generator，可以免除重复繁琐的回调函数嵌套，并极大地提升错误处理的效率。一个Koa应用就是一个对象，包含了一个middleware数组，这个数组由一组Generator函数组成。这些函数负责对HTTP请求进行各种加工，比如生成缓存、指定代理、请求重定向等等。这些中间件函数基于 request 请求以一个类似于栈的结构组成并依次执行。</code></pre></table>
+<h3>简介</h3>
+<h6>Koa 是一个新的 web 框架，由 Express 幕后的原班人马打造， 致力于成为 web 应用和 API 开发领域中的一个更小、更富有表现力、更健壮的基石。 通过利用 async 函数，Koa 帮你丢弃回调函数，并有力地增强错误处理。 Koa 并没有捆绑任何中间件， 而是提供了一套优雅的方法，帮助您快速而愉快地编写服务端应用程序。</h6>
+<h3>安装</h3>
+<h6>Koa 依赖 node v7.6.0 或 ES2015及更高版本和 async 方法支持.</h6>
+<p>寻找一个属于自己的工作区，新建一个文件夹，例如，我创建的文件夹名为 <em>koa2Demo</em> ,在当前文件夹下打开CND 命令行（均在于window下进行开发）,我们先初始化生产文件<code>package.json</code> 文件:
+<code>npm init -y</code>
+生产<code>package.json</code>,安装koa包：<code>npm install --save koa</code>
+当环境安装好后，可以在 <em>koa2Demo</em>目录下新建一个文件 <code>index.js</code> ，输入一下代码：</p>
+<table width='100%' class='codestyle'><pre><code>const Koa = require('koa')
+const app = new Koa()
+app.use( async ( ctx ) => {
+  ctx.body = 'hello koa2'
+})
+app.listen(3000)
+console.log('Koa2已启动！！')</code></pre></table>
+<p>如何运行koa？ ==》 在指令行中输入:node index.js 即可
+在浏览器中打开：<code>127.0.0.1:3000</code>或者
+<code>localhost:3000/</code>,有显示 <code>hello koa2</code>,则表示环境搭建成功！</p></div><h1>2、async/await的使用方法</h1><div style="margin-left:20px;"><ul>
+<li>
+<h4>什么是async和await</h4>
+</li>
+</ul>
+<p>你要想理解语法，可以先从两个单词的基本意思来进行了解.async是异步的简写，而await可以堪称async wait的简写。明白了两个单词，就很好理解了async是声明一个方法是异步的，await是等待异步方法完成。注意的是await必须在async方法中才可以使用因为await访问本身就会造成程序停止堵塞，所以必须在异步方法中才可以使用。</p>
+<ul>
+<li>
+<h4>async到底起什么作用？</h4>
+</li>
+</ul>
+<p>async是让方法变成异步
+在以前，我们希望用return直接返回async函数的值：</p>
+<table width='100%' class='codestyle'><pre><code>async function testAsync(){
+    return 'Hello async';
+}
+const result = testAsync();
+console.log(result);</code></pre></table>
+<p>会输出： Promise { 'Hello async' }
+很明显，这跟我们平时的方法不一样，因为在ES6中Promise本来就是异步的方法.</p>
+<ul>
+<li>
+<h4>await在等什么？</h4>
+</li>
+</ul>
+<p>await一般在等待async方法执行完毕，但是其实await等待的只是一个表达式，这个表达式在官方文档里说的是Promise对象，可是它也可以接受普通值。我们写一段代码来验证一下这个结果。在程序中我们有用async的方法，也有普通的方法。最后在控制台输出时，你会发现都可以直接输出。</p>
+<table width='100%' class='codestyle'><pre><code>function getSomething(){
+    return 'something';
+}
+async function testAsync(){
+    return 'Hello async';
+}
+async function test(){
+    const v1=await getSomething();
+    const v2=await testAsync();
+    console.log(v1,v2);
+}
+test();</code></pre></table>
+<p>输出结果为： something Hello async
+说明不管是普通的方法，还是async的方法，都可以通过这个进行获取值（异步的方法都需要添加 await ，避免运行的堵塞）</p>
+<ul>
+<li>
+<h4>async/await同时使用</h4>
+</li>
+</ul>
+<p>通过前面两个例子已经分别了解async和await，我们来作个虚假的例子，看一下等待问题。这只是一个虚假的，实际项目中多是去后台请求数据，等数据回来后进行执行。</p>
+<table width='100%' class='codestyle'><pre><code>function takeLongTime() {
+    return new Promise(resolve => {
+        setTimeout(() => resolve("long_time_value"), 1000);
+    });
+}
+async function test() {
+    const v = await takeLongTime();
+    console.log(v);
+}
+test();</code></pre></table>
+<p>会延迟一秒后再执行takeLongTime方法。</p></div><h1>3、Get请求的接收</h1><div style="margin-left:20px;"><h6>前后端配合时，后端都会告知你的请求时GET/POST请求，我们对两种请求在前端也是非常熟悉的</h6>
+<ul>
+<li>
+<p>在koa2中是通过request接收，但是接受的方法有两种：query和querystring</p>
+<ol>
+<li>query：返回的是格式化好的参数对象。</li>
+<li>querystring：返回的是请求字符串。
+执行以下代码：</li>
+</ol>
+<p>//这是通过request获取值
+const Koa = require("koa");
+const app = new Koa();
+app.use(async (ctx) => {
+let url = ctx.url;
+// 从request中接收GET请求
+let request = ctx.request;
+let req_query = request.query;
+let req_querystring = request.querystring;
+ctx.body = {url,req_query,req_querystring,}
+});
+app.listen(3000, () => {
+console.log("koa2 已启动,在3000端口")
+})</p>
+</li>
+</ul>
+<p>执行结果为:
+<img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-27/5bac9932b44c9.png" alt="" /></p>
+<table width='100%' class='codestyle'><pre><code>//在新版本的koa2中，也可以直接通过ctx是上下文进行获取数值
+const Koa = require("koa");
+const app = new Koa();
+app.use(async (ctx) => {
+    let url = ctx.url;
+    // 从上下文中直接获取GET请求
+    let ctx_query = ctx.query;
+    let ctx_querystring = ctx.querystring;
+    ctx.body = {
+        url,
+        ctx_query,
+        ctx_querystring
+    }
+});
+app.listen(3000, () => {
+    console.log("koa2 已启动,在3000端口")
+})</code></pre></table>
+<p>运行结果是一样的：
+<img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-27/5bac9a291936d.png" alt="" /></p></div><h1>4、Koa2原生的Post请求取值</h1><div style="margin-left:20px;"><h6>对于POST请求的处理，Koa2没有封装方便的获取参数的方法，需要通过解析上下文context中的原生node.js请求对象req来获取</h6>
+<hr />
+<h4>获取Post请求的步骤：</h4>
+<ol>
+<li>解析上下文ctx中的原生nodex.js对象req。</li>
+<li>将POST表单数据解析成query string-字符串.(例如:user=jspang&age=18)</li>
+<li>将字符串转换成JSON格式。</li>
+</ol>
+<h4>ctx.request和ctx.req的区别</h4>
+<ul>
+<li>ctx.request:是Koa2中context经过封装的请求对象，它用起来更直观和简单。</li>
+<li>ctx.req:是context提供的node.js原生HTTP请求对象。这个虽然不那么直观，但是可以得到更多的内容，适合我们深度编程。</li>
+</ul>
+<p>我们直接贴出代码，进行分析:</p>
+<table width='100%' class='codestyle'><pre><code>// POST请求接收
+const Koa = require("koa");
+const app = new Koa();
+app.use(async (ctx) => {
+    if (ctx.url === '/' && ctx.method === 'GET') {
+        //当时get请求时，显示表单页面
+        let html = `
+       <h1>JSPANG Koa2 request POST</h1>
+       <form method="POST" action="/">
+       <p>username</p>
+       <input name="username"/><br>
+       <p>age</p>
+        <input name = "age"/><br>
+       <p>website</p>
+        <input name = "website"/><br >
+        <button type = "submit" > submit </button>
+       </form>
+        `;
+        ctx.body = html;
+    } else if (ctx.url === '/' && ctx.method === 'POST') {
+        let postdata = await parsePostData(ctx);
+        ctx.body = postdata;
+    } else {
+        ctx.body = "<h1>404</h1>";
+    }
+});</code></pre></table>
+<p>我们先进行一个判断，当进入页面时，即是为GET请求，所以会显示一个表单，如下：
+<img src="http://120.78.75.213:4999/server/../Public/Uploads/2018-09-27/5baca2af86196.png" alt="" /></p>
+<h6>当我们在form表单输入对应的值时，会进行post请求，但是在本页面进行的。</h6>
+<table width='100%' class='codestyle'><pre><code>function parsePostData(ctx) {
+    return new Promise((resolve, reject) => {
+        try {
+            let postdata = "";
+            ctx.req.addListener('data', (data) => {
+                postdata += data;
+            });
+            ctx.req.on('end', () => {
+                let parseData = parseQueryStr(postdata);
+                resolve(parseData);
+            })
+        } catch (error) {
+            reject(error)
+        }
+    })
+}</code></pre></table>
+<p>这个是用于拼接字符串<code>ctx.req.addListener('data', (data) => {postdata += data;});</code> 获取当前页面传递过来的数据，然后进行拼接.</p>
+<table width='100%' class='codestyle'><pre><code>function parseQueryStr(queryStr) {
+    let queryData = {};
+    let queryDataList = queryStr.split('&');
+    for (let [index, querystr] of queryDataList.entries()) {
+        let itemList = querystr.split('=');
+        // decodeURIComponent(itemList[1]) 转意回来，获取的中文会decode成其他符号
+        queryData[itemList[0]] = decodeURIComponent(itemList[1]);
+    }
+    return queryData;
+}
+
+app.listen(3000, () => {
+    console.log("Koa2已启动，端口3000")
+})</code></pre></table>
+<p>拆分传递过来的的字符串，通过 <code>querystring</code> 获取的数值里面包含 <code>&</code> 已经 <code>=</code>,类似于这样子： <code>name=jspang&skill=web</code>,所以这一部的操作是将字符串拆分，重新组合为数组,其中要注意的是，浏览器会将一些特殊的字转化为指定的符号，例如中文，以及@等等。所以需要<code>decodeURIComponent()</code>转意回来。</p></div></body></html>
